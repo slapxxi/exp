@@ -4,7 +4,7 @@ import { NextApiResponse } from 'next';
 
 const DB_NAME = 'experimental';
 
-let client = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+let client = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: false, useUnifiedTopology: false });
 
 function withDatabase(handler: RequestHandler) {
   return (req: MiddlewareRequest, res: NextApiResponse) => {
