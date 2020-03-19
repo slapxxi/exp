@@ -1,0 +1,5 @@
+@use 'theme';
+
+.container {
+  @include theme.spacing;
+}

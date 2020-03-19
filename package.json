@@ -5,11 +5,21 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "debug": "NODE_OPTIONS=\"--inspect\" next dev",
     "start": "next start"
   },
   "dependencies": {
+    "@xstate/react": "^0.8.1",
     "next": "9.3.1",
     "react": "16.13.0",
-    "react-dom": "16.13.0"
+    "react-dom": "16.13.0",
+    "sass": "^1.26.3",
+    "xstate": "^4.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.9.2",
+    "@types/react": "^16.9.23",
+    "dotenv": "^8.2.0",
+    "typescript": "^3.8.3"
   }
 }
