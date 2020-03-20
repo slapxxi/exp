@@ -1,6 +1,8 @@
 import { Db } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+export type Maybe<T> = T | undefined;
+
 export type RequestHandler = (req: NextApiRequest, res: NextApiResponse) => void;
 
 export interface MiddlewareRequest extends NextApiRequest {
@@ -15,12 +17,27 @@ export interface Post {
   title: string;
   content: string;
   slug: string;
+  tags: string[];
   createdAt: Date;
+}
+
+export interface PostWithNavigation extends Post {
+  adjacentPosts: {
+    prev?: {
+      slug: string;
+      title: string;
+    };
+    next?: {
+      slug: string;
+      title: string;
+    };
+  };
 }
 
 export interface SerializedPost {
   title: string;
   content: string;
   slug: string;
+  tags: string[];
   createdAt: string;
 }

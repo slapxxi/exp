@@ -1,8 +1,6 @@
-import parseMarkdown from '@self/lib/parseMarkdown';
-import { MiddlewareRequest } from '@self/lib/types';
-import fs from 'fs';
+import { MiddlewareRequest, PostWithNavigation } from '@self/lib/types';
 import { NextApiResponse } from 'next';
-import path from 'path';
+import { getPosts } from '../posts';
 
 async function post(req: MiddlewareRequest, res: NextApiResponse) {
   let { slug } = req.query;
@@ -10,12 +8,21 @@ async function post(req: MiddlewareRequest, res: NextApiResponse) {
   res.json({ status: 'ok', data });
 }
 
-export async function getPost(slug: string) {
-  let p = path.join('posts', `${slug}.md`);
+export async function getPost(slug: string): Promise<PostWithNavigation> {
+  let posts = await getPosts();
+  let postIndex = posts.findIndex((p) => p.slug === slug);
 
-  if (fs.existsSync(p)) {
-    let content = fs.readFileSync(p, { encoding: 'utf-8' });
-    return parseMarkdown(content);
+  if (postIndex !== -1) {
+    let prevPost = posts[postIndex + 1];
+    let nextPost = posts[postIndex - 1];
+
+    return {
+      ...posts[postIndex],
+      adjacentPosts: {
+        prev: prevPost && { slug: prevPost.slug, title: prevPost.title },
+        next: nextPost && { slug: nextPost.slug, title: nextPost.title },
+      },
+    };
   }
 
   throw new Error(`Post "${slug}" does not exist"`);

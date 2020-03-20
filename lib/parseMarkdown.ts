@@ -1,13 +1,16 @@
 import graymatter from 'gray-matter';
-import md from 'markdown-it';
 import { Post } from './types';
 
-let Parser = md('commonmark');
+function parseMarkdown(value: string): Post {
+  let { data, content } = graymatter(value) as any;
 
-function parseMarkdown(content: string): Post {
-  let data = graymatter(content);
-  let parsed = Parser.render(data.content);
-  return { ...(data.data as any), content: parsed };
+  return {
+    title: data.title,
+    slug: data.slug,
+    tags: data.tags ?? [],
+    createdAt: data.createdAt,
+    content: content,
+  };
 }
 
 export default parseMarkdown;

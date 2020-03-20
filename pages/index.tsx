@@ -12,13 +12,23 @@ let Home: React.FunctionComponent<Props> = (props) => {
   let { posts } = props;
 
   return (
-    <div className={styles.container}>
+    <div>
       <ul>
         {posts.map((p) => (
           <li key={p.slug}>
             <Link href="/posts/[slug]" as={`/posts/${p.slug}`}>
               <a>{p.title}</a>
             </Link>
+
+            <div className={styles.date}>
+              <time>{new Date(p.createdAt).toString()}</time>
+            </div>
+
+            <ul>
+              {p.tags.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>

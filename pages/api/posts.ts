@@ -1,6 +1,7 @@
 import parseMarkdown from '@self/lib/parseMarkdown';
 import { MiddlewareRequest } from '@self/lib/types';
 import fs from 'fs';
+import { reverse, sortBy } from 'lodash';
 import md from 'markdown-it';
 import { NextApiResponse } from 'next';
 import path from 'path';
@@ -25,7 +26,7 @@ export async function getPosts() {
       return parseMarkdown(content);
     });
 
-    return docs;
+    return reverse(sortBy(docs, 'createdAt'));
   }
 
   throw new Error('Folder with posts does not exist');
