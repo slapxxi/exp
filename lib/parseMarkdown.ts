@@ -8,6 +8,7 @@ function parseMarkdown(value: string): Post {
     title: data.title,
     slug: data.slug,
     tags: data.tags ?? [],
+    description: data.description,
     createdAt: data.createdAt,
     content: content,
   };

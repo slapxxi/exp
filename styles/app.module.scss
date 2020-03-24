@@ -1,5 +1,22 @@
 @use 'theme';
+@use 'colors';
 
 .container {
   @include theme.spacing;
+}
+
+.navlist {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navlink {
+  text-decoration: none;
+  color: colors.$link;
+
+  &:hover {
+    color: colors.$link-hover;
+  }
 }

@@ -18,6 +18,7 @@ export interface Post {
   content: string;
   slug: string;
   tags: string[];
+  description: string;
   createdAt: Date;
 }
 
@@ -39,5 +40,6 @@ export interface SerializedPost {
   content: string;
   slug: string;
   tags: string[];
+  description: string;
   createdAt: string;
 }

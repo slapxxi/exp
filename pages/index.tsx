@@ -1,5 +1,7 @@
+import Title from '@self/components/Title';
 import { SerializedPost } from '@self/lib/types';
 import styles from '@self/styles/index.module.scss';
+import { format } from 'date-fns';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { getPosts } from './api/posts';
@@ -12,29 +14,32 @@ let Home: React.FunctionComponent<Props> = (props) => {
   let { posts } = props;
 
   return (
-    <div>
-      <ul>
+    <div className={styles.container}>
+      <ul className={styles.postlist}>
         {posts.map((p) => (
           <li key={p.slug}>
             <Link href="/posts/[slug]" as={`/posts/${p.slug}`}>
-              <a>{p.title}</a>
+              <a className={styles.link}>
+                <Title level={1}>{p.title}</Title>
+              </a>
             </Link>
 
             <div className={styles.date}>
-              <time>{new Date(p.createdAt).toString()}</time>
+              <time>{formatDate(p.createdAt)}</time>
             </div>
 
-            <ul>
-              {p.tags.map((t) => (
-                <li>{t}</li>
-              ))}
-            </ul>
+            <p>{p.description}</p>
           </li>
         ))}
       </ul>
     </div>
   );
 };
+
+function formatDate(value: string): string {
+  let date = new Date(value);
+  return format(date, 'dd MMMM yyyy');
+}
 
 export let getStaticProps: GetStaticProps = async () => {
   let posts = await getPosts();
