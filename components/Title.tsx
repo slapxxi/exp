@@ -1,4 +1,4 @@
-import styles from '@self/styles/title.module.scss';
+import styled from '@emotion/styled';
 
 interface Props {
   level: number;
@@ -7,9 +7,19 @@ interface Props {
 
 let Title: React.FunctionComponent<Props> = (props) => {
   let { level, children, className } = props;
-  let Elem: any = `h${level}`;
+  let elem = `h${level}`;
 
-  return <Elem className={[styles.title, className].join(' ')}>{children}</Elem>;
+  return (
+    // @ts-ignore
+    <Container as={elem} className={className} level={level}>
+      {children}
+    </Container>
+  );
 };
+
+const Container = styled.h1<{ level: number }>`
+  font-family: Poppins, sans-serif;
+  font-size: ${({ level }) => (level === 1 ? 3 : 4.5 / level)}rem;
+`;
 
 export default Title;

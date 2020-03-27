@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import styles from '@self/styles/app.module.scss';
 import '@self/styles/general.scss';
 import '@self/styles/normalize.css';
@@ -8,8 +9,8 @@ let App: AppType = (props) => {
   let { Component, pageProps } = props;
 
   return (
-    <div className={styles.container}>
-      <header>
+    <div>
+      <Header>
         <nav>
           <ul className={styles.navlist}>
             <li>
@@ -19,10 +20,15 @@ let App: AppType = (props) => {
             </li>
           </ul>
         </nav>
-      </header>
+      </Header>
+
       <Component {...pageProps}></Component>
     </div>
   );
 };
+
+const Header = styled.header`
+  padding: 0.5rem;
+`;
 
 export default App;

@@ -1,7 +1,7 @@
+import Datetime from '@self/components/Datetime';
 import Title from '@self/components/Title';
 import { SerializedPost } from '@self/lib/types';
 import styles from '@self/styles/index.module.scss';
-import { format } from 'date-fns';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { getPosts } from './api/posts';
@@ -24,9 +24,7 @@ let Home: React.FunctionComponent<Props> = (props) => {
               </a>
             </Link>
 
-            <div className={styles.date}>
-              <time>{formatDate(p.createdAt)}</time>
-            </div>
+            <Datetime date={p.createdAt}></Datetime>
 
             <p>{p.description}</p>
           </li>
@@ -35,11 +33,6 @@ let Home: React.FunctionComponent<Props> = (props) => {
     </div>
   );
 };
-
-function formatDate(value: string): string {
-  let date = new Date(value);
-  return format(date, 'dd MMMM yyyy');
-}
 
 export let getStaticProps: GetStaticProps = async () => {
   let posts = await getPosts();

@@ -1,4 +1,9 @@
+/** @jsx jsx */
+import { css, jsx } from '@emotion/core';
+import styled from '@emotion/styled';
+import CodeBlock from '@self/components/CodeBlock';
 import Datetime from '@self/components/Datetime';
+import ImageComponent from '@self/components/Image';
 import Title from '@self/components/Title';
 import { PostWithNavigation } from '@self/lib/types';
 import styles from '@self/styles/slug.module.scss';
@@ -16,33 +21,78 @@ let PostPage: React.FunctionComponent<Props> = (props) => {
   let { post } = props;
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <Title level={1} className={styles.title}>
+    <div key={post.slug}>
+      <Header>
+        <Title
+          level={1}
+          css={css`
+            max-width: 44rem;
+            margin: 0 auto;
+          `}
+        >
           {post.title}
         </Title>
         <Datetime date={post.createdAt}></Datetime>
-      </header>
+      </Header>
 
-      <Markdown source={post.content} renderers={{ heading: Title }}></Markdown>
+      <Markdown
+        source={post.content}
+        renderers={{
+          heading: Heading,
+          code: CodeBlock,
+          image: ImageComponent,
+          paragraph: Paragraph,
+          text: Text,
+        }}
+      ></Markdown>
 
-      <footer className={styles.footer}>
+      <Footer>
         {post.adjacentPosts.prev && (
           <Link href="/posts/[slug]" as={`/posts/${post.adjacentPosts.prev.slug}`}>
             <a className={styles.link}>◀ {post.adjacentPosts.prev.title}</a>
           </Link>
         )}
-        <div className={styles.next}>
+        <Next>
           {post.adjacentPosts.next && (
             <Link href="/posts/[slug]" as={`/posts/${post.adjacentPosts.next.slug}`}>
               <a className={styles.link}>{post.adjacentPosts.next.title} ▶</a>
             </Link>
           )}
-        </div>
-      </footer>
+        </Next>
+      </Footer>
     </div>
   );
 };
+
+const Heading = styled(Title)`
+  max-width: 44rem;
+  margin: 1.4em auto;
+`;
+
+const Header = styled.header`
+  padding: 0 0.5rem;
+  max-width: 44rem;
+  margin: 0 auto 4rem;
+`;
+
+const Paragraph = styled.p`
+  max-width: 44rem;
+  margin: 1em auto;
+`;
+
+const Text = styled.span`
+  padding: 0 1rem;
+  display: block;
+`;
+
+const Footer = styled.footer`
+  display: flex;
+  padding: 1.5rem 0.5rem;
+`;
+
+const Next = styled.div`
+  margin-left: auto;
+`;
 
 export let getStaticPaths: GetStaticPaths = async () => {
   let paths = (await getPosts()).map((p) => `/posts/${p.slug}`);

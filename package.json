@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "debug": "NODE_OPTIONS=\"--inspect\" next dev",
-    "start": "next start"
+    "start": "next start",
+    "compress": "node ./scripts/compress_images.js"
   },
   "dependencies": {
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
     "@xstate/react": "^0.8.1",
     "date-fns": "^2.11.0",
     "gray-matter": "^4.0.2",
@@ -21,7 +24,9 @@
     "react": "16.13.0",
     "react-dom": "16.13.0",
     "react-markdown": "^4.3.1",
+    "react-syntax-highlighter": "^12.2.1",
     "sass": "^1.26.3",
+    "sharp": "^0.25.2",
     "xstate": "^4.8.0"
   },
   "devDependencies": {
@@ -31,7 +36,9 @@
     "@types/node": "^13.9.2",
     "@types/react": "^16.9.23",
     "@types/react-dom": "16.9.5",
+    "@types/react-syntax-highlighter": "^11.0.4",
     "@types/sass": "^1.16.0",
+    "@types/sharp": "^0.24.0",
     "dotenv": "^8.2.0",
     "typescript": "^3.8.3"
   }
