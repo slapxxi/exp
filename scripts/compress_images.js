@@ -16,7 +16,8 @@ pngImages.forEach(async (p) => {
   let file = fs.readFileSync(INPUT_PATH);
 
   await sharp(file)
-    .resize(1920)
+    .jpeg({ quality: 85 })
+    .resize(1080)
     .toFile(OUTPUT_PATH);
 });
 
@@ -27,6 +28,6 @@ pngImages.forEach(async (p) => {
   let file = fs.readFileSync(INPUT_PATH);
 
   await sharp(file)
-    .resize(10)
+    .resize(20)
     .toFile(OUTPUT_PATH);
 });
