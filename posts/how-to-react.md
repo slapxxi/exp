@@ -3,12 +3,11 @@ title: How to React
 slug: how-to-react
 description: Was afraid of learning React? Be no more.
 createdAt: 2020-03-18T12:00:00.350Z
+pic: torus.png
 tags:
   - js
   - react
 ---
-
-![Torus](torus.png)
 
 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla quam eaque voluptatem iusto qui natus quaerat aut saepe, et praesentium fuga in ratione quidem repellat voluptatum eum, eius at reprehenderit.
 

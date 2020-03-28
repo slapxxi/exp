@@ -27,13 +27,24 @@ let PostPage: React.FunctionComponent<Props> = (props) => {
           level={1}
           css={css`
             max-width: 44rem;
-            margin: 0 auto;
+            margin: 0 auto 0.5rem;
           `}
         >
           {post.title}
         </Title>
         <Datetime date={post.createdAt}></Datetime>
+
+        {post.pic && (
+          <ImageComponent
+            src={post.pic}
+            css={css`
+              margin-top: 2rem;
+            `}
+          ></ImageComponent>
+        )}
       </Header>
+
+      <Description>{post.description}</Description>
 
       <Markdown
         source={post.content}
@@ -76,12 +87,19 @@ const Header = styled.header`
 `;
 
 const Paragraph = styled.p`
-  max-width: 44rem;
   margin: 1em auto;
 `;
 
+const Description = styled.p`
+  margin: 1em auto;
+  max-width: 44rem;
+  font-size: 1.4rem;
+`;
+
 const Text = styled.span`
-  padding: 0 1rem;
+  display: block;
+  max-width: 44rem;
+  margin: 0 auto;
   display: block;
 `;
 

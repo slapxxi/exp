@@ -3,9 +3,8 @@ title: First Post Ever Created
 slug: first-one
 description: Learn how to not give a damn
 createdAt: 2020-03-20T12:07:25.350Z
+pic: untitled.png
 ---
-
-![Knot XYZ](untitled.png)
 
 Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur minus iste error expedita eius aut quis eum fugit, enim suscipit dolor quas odit repellat quasi commodi rem similique nam ducimus?
 

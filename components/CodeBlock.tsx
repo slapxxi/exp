@@ -26,6 +26,12 @@ let CodeBlock: React.FunctionComponent<Props> = (props) => {
   );
 };
 
+const Container = styled.div`
+  position: relative;
+  max-width: 960px;
+  margin: 0 auto;
+`;
+
 const Navigation = styled.div`
   position: absolute;
   z-index: 1;
@@ -34,10 +40,6 @@ const Navigation = styled.div`
   overflow: hidden;
   background: #fff;
   font-size: 12px;
-`;
-
-const Container = styled.div`
-  position: relative;
 `;
 
 export default CodeBlock;

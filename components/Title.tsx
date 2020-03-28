@@ -20,6 +20,7 @@ let Title: React.FunctionComponent<Props> = (props) => {
 const Container = styled.h1<{ level: number }>`
   font-family: Poppins, sans-serif;
   font-size: ${({ level }) => (level === 1 ? 3 : 4.5 / level)}rem;
+  margin: 0 auto;
 `;
 
 export default Title;

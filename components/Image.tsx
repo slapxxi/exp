@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 
 interface Props {
   src: string;
-  alt: string;
+  alt?: string;
+  className?: string;
 }
 
 let ImageComponent: React.FunctionComponent<Props> = (props) => {
-  let { src, alt } = props;
+  let { src, alt, className } = props;
   let [loading, setLoading] = useState(true);
   let path = generatePath(src, 'preview');
   let finalPath = generatePath(src, 'compressed');
@@ -25,9 +26,9 @@ let ImageComponent: React.FunctionComponent<Props> = (props) => {
   }, []);
 
   return (
-    <Container>
+    <Container className={className}>
       <Img width={1920} height={1080} src={loading ? path : finalPath} alt={alt} />
-      <Description>{alt}</Description>
+      {alt && <Description>{alt}</Description>}
     </Container>
   );
 };
@@ -44,7 +45,7 @@ function generatePath(src: string, prefix: 'compressed' | 'preview'): string {
 
 const Container = styled.span`
   display: block;
-  margin: 2rem 0;
+  margin: 0 auto;
 `;
 
 const Img = styled.img<any>`

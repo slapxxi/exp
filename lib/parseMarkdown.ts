@@ -10,6 +10,7 @@ function parseMarkdown(value: string): Post {
     tags: data.tags ?? [],
     description: data.description,
     createdAt: data.createdAt,
+    pic: data.pic,
     content: content,
   };
 }

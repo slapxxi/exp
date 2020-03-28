@@ -8,9 +8,8 @@ tags:
   - js
   - react
   - ssr
+pic: zeit.svg
 ---
-
-![Zeit](zeit.svg)
 
 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, recusandae autem exercitationem nulla minima voluptas, non voluptatum cupiditate optio facere eius, quibusdam tempora consectetur iusto possimus ducimus veniam. Minima aliquid molestiae expedita eligendi, odio nemo quisquam labore mollitia reiciendis consectetur suscipit nisi perspiciatis temporibus eveniet cum! Quos vero quidem tenetur.
 
