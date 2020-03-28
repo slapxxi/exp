@@ -94,6 +94,7 @@ const Description = styled.p`
   margin: 1em auto;
   max-width: 44rem;
   font-size: 1.4rem;
+  color: hsl(350, 10%, 20%);
 `;
 
 const Text = styled.span`
