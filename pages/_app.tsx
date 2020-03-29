@@ -12,13 +12,18 @@ let App: AppType = (props) => {
     <div>
       <Header>
         <nav>
-          <ul className={styles.navlist}>
-            <li>
-              <Link href="/">
+          <List>
+            <ListItem>
+              <Link href="/" as="/">
                 <a className={styles.navlink}>Home</a>
               </Link>
-            </li>
-          </ul>
+            </ListItem>
+            <ListItem>
+              <Link href="/posts" as="/posts">
+                <a className={styles.navlink}>Posts</a>
+              </Link>
+            </ListItem>
+          </List>
         </nav>
       </Header>
 
@@ -28,7 +33,18 @@ let App: AppType = (props) => {
 };
 
 const Header = styled.header`
-  padding: 0.5rem;
+  padding: 0;
+`;
+
+const List = styled.ul`
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+`;
+
+const ListItem = styled.li`
+  margin: 5px;
 `;
 
 export default App;

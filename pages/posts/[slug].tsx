@@ -23,7 +23,7 @@ let PostPage: React.FunctionComponent<Props> = (props) => {
   let { post } = props;
 
   return (
-    <div key={post.slug}>
+    <Container key={post.slug}>
       <Header>
         <Title
           level={1}
@@ -60,22 +60,34 @@ let PostPage: React.FunctionComponent<Props> = (props) => {
       ></Markdown>
 
       <Footer>
-        {post.adjacentPosts.prev && (
-          <Link href="/posts/[slug]" as={`/posts/${post.adjacentPosts.prev.slug}`}>
-            <a className={styles.link}>◀ {post.adjacentPosts.prev.title}</a>
-          </Link>
-        )}
+        <Prev>
+          {post.adjacentPosts.prev && (
+            <>
+              <span>◀</span>
+              <Link href="/posts/[slug]" as={`/posts/${post.adjacentPosts.prev.slug}`}>
+                <a className={styles.link}> {post.adjacentPosts.prev.title}</a>
+              </Link>
+            </>
+          )}
+        </Prev>
         <Next>
           {post.adjacentPosts.next && (
-            <Link href="/posts/[slug]" as={`/posts/${post.adjacentPosts.next.slug}`}>
-              <a className={styles.link}>{post.adjacentPosts.next.title} ▶</a>
-            </Link>
+            <>
+              <Link href="/posts/[slug]" as={`/posts/${post.adjacentPosts.next.slug}`}>
+                <a className={styles.link}>{post.adjacentPosts.next.title} </a>
+              </Link>
+              <span>▶</span>
+            </>
           )}
         </Next>
       </Footer>
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  padding: 2rem 0;
+`;
 
 const Heading = styled(Title)`
   max-width: 44rem;
@@ -115,8 +127,51 @@ const Footer = styled.footer`
   padding: 1.5rem 0.5rem;
 `;
 
+const sharedStyles = css`
+  position: fixed;
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  top: 50px;
+  width: 200px;
+  height: calc(100vh - 50px);
+  padding: 1rem;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+
+  :hover {
+    opacity: 1;
+  }
+
+  a:link,
+  a:hover,
+  a:visited {
+    color: hotpink;
+  }
+
+  > span {
+    color: hotpink;
+  }
+`;
+
+const Prev = styled.div`
+  ${sharedStyles}
+  left: 0;
+  justify-content: flex-start;
+
+  > span {
+    margin-right: 1rem;
+  }
+`;
+
 const Next = styled.div`
-  margin-left: auto;
+  ${sharedStyles}
+  right: 0;
+  justify-content: flex-end;
+
+  > span {
+    margin-left: 1rem;
+  }
 `;
 
 async function extractImage(p: string): Promise<string> {
