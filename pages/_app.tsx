@@ -23,6 +23,11 @@ let App: AppType = (props) => {
                 <a className={styles.navlink}>Posts</a>
               </Link>
             </ListItem>
+            <ListItem>
+              <Link href="/login" as="/login">
+                <a className={styles.navlink}>Login</a>
+              </Link>
+            </ListItem>
           </List>
         </nav>
       </Header>

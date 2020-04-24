@@ -1,7 +1,11 @@
 interface Props {}
 
-let Page: React.FunctionComponent<Props> = () => {
-  return <div>Index</div>;
+let IndexPage: React.FunctionComponent<Props> = (props) => {
+  return (
+    <div>
+      <h1>Index Page</h1>
+    </div>
+  );
 };
 
-export default Page;
+export default IndexPage;
