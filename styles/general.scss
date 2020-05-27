@@ -1,9 +1,0 @@
-@use 'helpers';
-
-@include helpers.google-font(helpers.$font, 400 500 600 700);
-@include helpers.google-font(helpers.$text-font, 400 500 600 700);
-
-p {
-  font-family: helpers.$text-font, serif;
-  line-height: 1.6;
-}

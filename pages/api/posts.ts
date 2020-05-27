@@ -2,11 +2,8 @@ import parseMarkdown from '@self/lib/parseMarkdown';
 import { MiddlewareRequest } from '@self/lib/types';
 import fs from 'fs';
 import { reverse, sortBy } from 'lodash';
-import md from 'markdown-it';
 import { NextApiResponse } from 'next';
 import path from 'path';
-
-let Parser = md('commonmark');
 
 async function posts(req: MiddlewareRequest, res: NextApiResponse) {
   try {

@@ -5,17 +5,18 @@ import { xonokai } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 interface Props {
   language: string;
   value: string;
+  className?: string;
 }
 
 let CodeBlock: React.FunctionComponent<Props> = (props) => {
-  let { language, value } = props;
+  let { className, language, value } = props;
 
   async function handleCopy() {
     await navigator.clipboard.writeText(value);
   }
 
   return (
-    <Container>
+    <Container className={className}>
       <Navigation>
         <button onClick={handleCopy}>Copy</button>
       </Navigation>

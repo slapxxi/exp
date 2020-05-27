@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import styles from '@self/styles/app.module.scss';
-import '@self/styles/general.scss';
 import '@self/styles/normalize.css';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import Link from 'next/link';
+import { RecoilRoot } from 'recoil';
 
 let App: AppType = (props) => {
   let { Component, pageProps } = props;
@@ -19,11 +19,6 @@ let App: AppType = (props) => {
               </Link>
             </ListItem>
             <ListItem>
-              <Link href="/posts" as="/posts">
-                <a className={styles.navlink}>Posts</a>
-              </Link>
-            </ListItem>
-            <ListItem>
               <Link href="/login" as="/login">
                 <a className={styles.navlink}>Login</a>
               </Link>
@@ -32,7 +27,9 @@ let App: AppType = (props) => {
         </nav>
       </Header>
 
-      <Component {...pageProps}></Component>
+      <RecoilRoot>
+        <Component {...pageProps}></Component>
+      </RecoilRoot>
     </div>
   );
 };
