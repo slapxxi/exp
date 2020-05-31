@@ -28,7 +28,7 @@
     "react-markdown": "^4.3.1",
     "react-modal": "^3.11.2",
     "react-syntax-highlighter": "^12.2.1",
-    "recoil": "^0.0.8",
+    "recoil": "0.0.7",
     "sass": "^1.26.5",
     "sharp": "^0.25.2",
     "swr": "^0.2.2",

@@ -3,7 +3,6 @@ import styles from '@self/styles/app.module.scss';
 import '@self/styles/normalize.css';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import Link from 'next/link';
-import { RecoilRoot } from 'recoil';
 
 let App: AppType = (props) => {
   let { Component, pageProps } = props;
@@ -27,9 +26,7 @@ let App: AppType = (props) => {
         </nav>
       </Header>
 
-      <RecoilRoot>
-        <Component {...pageProps}></Component>
-      </RecoilRoot>
+      <Component {...pageProps}></Component>
     </div>
   );
 };
