@@ -1,32 +1,50 @@
-import { useState } from 'react';
+import Button from '@self/components/Button';
+import Input from '@self/components/Input';
+import { atom, useRecoilState } from 'recoil';
 
 interface Props {}
 
-let LoginPage: React.FunctionComponent<Props> = () => {
-  let [userData, setUserData] = useState({ username: '', error: '' });
+export let userDataState = atom({
+  key: 'userdata',
+  default: { username: '' },
+});
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+let LoginPage: React.FunctionComponent<Props> = () => {
+  let [userData, setUserData] = useRecoilState(userDataState);
+
+  function handleSetUsername(event: React.ChangeEvent<HTMLInputElement>) {
+    setUserData((prev) => ({ username: event.target.value }));
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Username</label>
-
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={userData.username}
-          onChange={(event) => setUserData({ ...userData, username: event.target.value })}
-        />
-
-        <button type="submit">Login</button>
-
-        {userData.error && <p className="error">Error: {userData.error}</p>}
+    <div className="container">
+      <h1 className="title">Login</h1>
+      <form action="">
+        <div className="my-4">
+          <label htmlFor="username" className="block mb-4">
+            Username
+          </label>
+          <Input
+            id="username"
+            type="text"
+            value={userData.username}
+            placeholder="Enter username"
+            onChange={handleSetUsername}
+            className="w-full"
+          ></Input>
+        </div>
+        <div className="my-4">
+          <label htmlFor="password" className="block mb-4">
+            Password
+          </label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="Enter password"
+            className="w-full"
+          ></Input>
+        </div>
+        <Button>Login</Button>
       </form>
     </div>
   );

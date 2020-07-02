@@ -5,6 +5,8 @@ export type Maybe<T> = T | undefined;
 
 export type RequestHandler = (req: NextApiRequest, res: NextApiResponse) => void;
 
+export type DBRequestHandler = (req: MiddlewareRequest, res: NextApiResponse) => void;
+
 export interface MiddlewareRequest extends NextApiRequest {
   db?: Db;
 }
@@ -44,4 +46,15 @@ export interface SerializedPost {
   description: string;
   pic: string;
   createdAt: string;
+}
+
+export interface PhoneData {
+  phoneNumber: string;
+  comments: Comment[];
+}
+
+export interface Comment {
+  author: string;
+  content: string;
+  phoneType: string;
 }

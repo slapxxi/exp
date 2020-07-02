@@ -1,7 +1,3 @@
-const dotenv = require('dotenv');
-
-dotenv.config();
-
 module.exports = {
   env: {
     DEPLOYMENT_URL: process.env.DEPLOYMENT_URL,
