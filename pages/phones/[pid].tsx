@@ -6,6 +6,7 @@ import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
 import { PhoneData, PhoneType } from '@self/lib/types';
 import { useMachine } from '@xstate/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import { assign, Machine } from 'xstate';
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 interface Context {
   phoneNumber: string;
   formData: { phoneType: '' | PhoneType; content: string; name: string };
+  error: Error;
   response: any;
 }
 
@@ -30,6 +32,7 @@ interface Schema {
 
 type Actions =
   | { type: 'done.invoke.uploadComment'; data: any }
+  | { type: 'error.platform.uploadComment'; data: any }
   | { type: 'CHANGE_NAME'; payload: string }
   | { type: 'CHANGE_COMMENT'; payload: string }
   | { type: 'CHANGE_TYPE'; payload: PhoneType }
@@ -46,6 +49,7 @@ let pageMachine = Machine<Context, Actions>(
         content: '',
         name: '',
       },
+      error: null,
     },
     id: 'pageMachine',
     states: {
@@ -86,7 +90,13 @@ let pageMachine = Machine<Context, Actions>(
             phoneNumber: context.phoneNumber,
             phoneType: context.formData.phoneType,
           }),
-        }).then((r) => r.json());
+        })
+          .then((r) => r.json())
+          .then((res) => {
+            if (res.status === 'error') {
+              throw new Error(res.message);
+            }
+          });
       },
     },
     actions: {
@@ -110,6 +120,11 @@ let pageMachine = Machine<Context, Actions>(
           return { response: event.data };
         }
       }),
+      setError: assign((context, event) => {
+        if (event.type === 'error.platform.uploadComment') {
+          return { error: event.data };
+        }
+      }),
     },
     guards: {
       isValidFormData: (context) => {
@@ -124,6 +139,7 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
   let [state, send] = useMachine(pageMachine, {
     context: { phoneNumber: data?.phoneNumber },
   });
+  let router = useRouter();
 
   function handleChangeName(event: React.ChangeEvent<HTMLInputElement>) {
     send({ type: 'CHANGE_NAME', payload: event.target.value });
@@ -140,6 +156,10 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     send('SUBMIT');
+  }
+
+  if (router.isFallback) {
+    return <div className="container p-4 text-xl text-gray-800 text-center">Loading...</div>;
   }
 
   if (!isValidPhoneNumber) {
@@ -205,14 +225,16 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
           <ul>
             {data.comments.map((comment) => (
               <li className="flex flex-col shadow rounded p-4 space-y-2 mb-4">
-                <div className="flex items-center space-x-4">
-                  <div>
-                    <img src="" alt="" className="rounded-full w-8 h-8 bg-gray-300" />
+                {comment.content && (
+                  <div className="flex items-center space-x-4">
+                    <div>
+                      <img src="" alt="" className="rounded-full w-8 h-8 bg-gray-300" />
+                    </div>
+                    <span>{comment.content}</span>
                   </div>
-                  <span>{comment.content}</span>
-                </div>
+                )}
                 <footer className="flex justify-between space-x-4 text-gray-600">
-                  <small>{comment.author}</small>
+                  <small>{comment.author ? comment.author : 'Anonymous'}</small>
                   <small>
                     Marked as <strong>{comment.phoneType}</strong>
                   </small>
@@ -223,9 +245,9 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
         </div>
       )}
 
-      {state.matches('formError') && (
+      {(state.matches('formError') || state.matches('fetchError')) && (
         <div className="container p-4 bg-red-200 rounded border border-red-400 text-red-900 my-4">
-          Error
+          {state.context.error?.message}
         </div>
       )}
 
@@ -256,6 +278,9 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
             <div className="md:flex md:w-5/12 items-center mb-4 md:space-x-4">
               <label htmlFor="phoneNumberType" className="block mb-2 md:mb-0">
                 Type
+                <sup className="text-red-600" title="Required field">
+                  *
+                </sup>
               </label>
               <select
                 disabled={state.matches('fetching')}
@@ -336,7 +361,16 @@ export let getStaticProps: GetStaticProps = async (context) => {
     let data = await db
       .collection('phones')
       .findOne({ phoneNumber: parsedPhoneNumber.normalized }, { projection: { _id: 0 } });
-    return { props: { data, key: phoneNumber, isValidPhoneNumber }, unstable_revalidate: 1 };
+
+    let result = data ?? { phoneNumber: parsedPhoneNumber.normalized, comments: [] };
+    return {
+      props: {
+        data: { ...result },
+        key: phoneNumber,
+        isValidPhoneNumber,
+      },
+      unstable_revalidate: 1,
+    };
   }
 
   return {
