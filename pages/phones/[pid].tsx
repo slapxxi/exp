@@ -1,19 +1,21 @@
+import { MessageCount } from '@self/components/MessageCount';
 import PhoneNumber from '@self/components/PhoneNumber';
+import { ViewCount } from '@self/components/ViewCount';
 import connectDb from '@self/lib/connectDb';
-import { PhoneData } from '@self/lib/types';
+import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
+import { PhoneData, PhoneType } from '@self/lib/types';
 import { useMachine } from '@xstate/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { Eye, MessageCircle } from 'react-feather';
 import { assign, Machine } from 'xstate';
 
 interface Props {
   data?: PhoneData;
-  error?: string;
+  isValidPhoneNumber: boolean;
 }
 
 interface Context {
   phoneNumber: string;
-  formData: any;
+  formData: { phoneType: '' | PhoneType; content: string; name: string };
   response: any;
 }
 
@@ -27,10 +29,10 @@ interface Schema {
 }
 
 type Actions =
+  | { type: 'done.invoke.uploadComment'; data: any }
   | { type: 'CHANGE_NAME'; payload: string }
   | { type: 'CHANGE_COMMENT'; payload: string }
-  | { type: 'done.invoke.uploadComment'; data: any }
-  | { type: 'CHANGE_TYPE'; payload: string }
+  | { type: 'CHANGE_TYPE'; payload: PhoneType }
   | { type: 'SUBMIT' };
 
 let pageMachine = Machine<Context, Actions>(
@@ -118,19 +120,17 @@ let pageMachine = Machine<Context, Actions>(
 );
 
 let PhonePage: React.FunctionComponent<Props> = (props) => {
-  let { data, error } = props;
+  let { data, isValidPhoneNumber } = props;
   let [state, send] = useMachine(pageMachine, {
     context: { phoneNumber: data?.phoneNumber },
   });
-
-  console.log(state.context);
 
   function handleChangeName(event: React.ChangeEvent<HTMLInputElement>) {
     send({ type: 'CHANGE_NAME', payload: event.target.value });
   }
 
   function handleChangeType(event: React.ChangeEvent<HTMLSelectElement>) {
-    send({ type: 'CHANGE_TYPE', payload: event.target.value });
+    send({ type: 'CHANGE_TYPE', payload: event.target.value as PhoneType });
   }
 
   function handleChangeComment(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -142,25 +142,24 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
     send('SUBMIT');
   }
 
+  if (!isValidPhoneNumber) {
+    return (
+      <div>
+        <div className="container p-4 bg-red-200 rounded border border-red-400 text-red-900 my-4">
+          Phone number is not valid! Redirecting back...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {error && (
-        <div className="container p-4 bg-red-200 rounded border border-red-400 text-red-900 my-4">
-          {error}
-        </div>
-      )}
       {data && (
         <header className="p-6 text-center">
           <PhoneNumber phone={data.phoneNumber} className="block mb-2"></PhoneNumber>
           <div className="flex justify-center space-x-4 text-sm text-gray-600">
-            <div className="flex items-center space-x-2">
-              <Eye size={18}></Eye>
-              <span>98</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <MessageCircle size={18}></MessageCircle>
-              <span>22</span>
-            </div>
+            <ViewCount count={34}></ViewCount>
+            <MessageCount count={data.comments.length}></MessageCount>
             <div>
               Belongs to <strong>Megafon</strong>
             </div>
@@ -312,19 +311,38 @@ export let getStaticPaths: GetStaticPaths = async () => {
     .find({}, { projection: { _id: 0, phoneNumber: 1 } })
     .limit(100)
     .toArray();
-  return { paths: popularPhones.map((p) => ({ params: { pid: p.phoneNumber } })), fallback: true };
+  return {
+    paths: popularPhones
+      .filter((p) => p.phoneNumber)
+      .map((p) => ({ params: { pid: p.phoneNumber } })),
+    fallback: true,
+  };
 };
 
 export let getStaticProps: GetStaticProps = async (context) => {
   let db = await connectDb();
-  let phoneNumber = context.params.pid;
-  let data = await db.collection('phones').findOne({ phoneNumber }, { projection: { _id: 0 } });
+  let phoneNumber = context.params.pid as string;
+  let parsedPhoneNumber: ReturnType<typeof parsePhoneNumber>;
+  let isValidPhoneNumber: boolean;
 
-  if (data) {
-    return { props: { data, key: phoneNumber }, unstable_revalidate: 1 };
+  try {
+    parsedPhoneNumber = parsePhoneNumber(phoneNumber);
+    isValidPhoneNumber = true;
+  } catch {
+    isValidPhoneNumber = false;
   }
 
-  return { props: { error: 'Number Not Found', key: phoneNumber }, unstable_revalidate: 1 };
+  if (isValidPhoneNumber) {
+    let data = await db
+      .collection('phones')
+      .findOne({ phoneNumber: parsedPhoneNumber.normalized }, { projection: { _id: 0 } });
+    return { props: { data, key: phoneNumber, isValidPhoneNumber }, unstable_revalidate: 1 };
+  }
+
+  return {
+    props: { key: phoneNumber, isValidPhoneNumber },
+    unstable_revalidate: 1,
+  };
 };
 
 export default PhonePage;

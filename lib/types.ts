@@ -58,3 +58,5 @@ export interface Comment {
   content: string;
   phoneType: string;
 }
+
+export type PhoneType = 'scam' | 'ads' | 'pranks';
