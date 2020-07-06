@@ -3,8 +3,10 @@ import PhoneNumber from '@self/components/PhoneNumber';
 import { ViewCount } from '@self/components/ViewCount';
 import connectDb from '@self/lib/connectDb';
 import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
-import { PhoneData, PhoneType } from '@self/lib/types';
+import { serializePhoneData } from '@self/lib/serializePhoneData';
+import { PhoneData, PhoneType, UserComment } from '@self/lib/types';
 import { useMachine } from '@xstate/react';
+import { reverse, sortBy } from 'lodash';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { assign, Machine } from 'xstate';
@@ -16,6 +18,7 @@ interface Props {
 
 interface Context {
   phoneNumber: string;
+  comments: UserComment[];
   formData: { phoneType: '' | PhoneType; content: string; name: string };
   error: Error;
   response: any;
@@ -44,6 +47,7 @@ let pageMachine = Machine<Context, Actions>(
     context: {
       response: null,
       phoneNumber: null,
+      comments: [],
       formData: {
         phoneType: '',
         content: '',
@@ -54,6 +58,7 @@ let pageMachine = Machine<Context, Actions>(
     id: 'pageMachine',
     states: {
       idle: {
+        entry: 'sortComments',
         on: {
           CHANGE_NAME: { actions: 'changeName' },
           CHANGE_COMMENT: { actions: 'changeComment' },
@@ -65,7 +70,7 @@ let pageMachine = Machine<Context, Actions>(
         invoke: {
           src: 'uploadComment',
           onError: { target: 'fetchError', actions: 'setError' },
-          onDone: { target: 'finished', actions: 'setResponse' },
+          onDone: { target: 'finished', actions: ['setComments', 'sortComments'] },
         },
       },
       formError: {
@@ -93,13 +98,17 @@ let pageMachine = Machine<Context, Actions>(
         })
           .then((r) => r.json())
           .then((res) => {
-            if (res.status === 'error') {
-              throw new Error(res.message);
+            if (res.status === 'ok') {
+              return res.data;
             }
+            throw new Error(res.message);
           });
       },
     },
     actions: {
+      sortComments: assign((context, event) => {
+        return { ...context, comments: reverse(sortBy(context.comments, 'createdAt')) };
+      }),
       changeName: assign((context, event) => {
         if (event.type === 'CHANGE_NAME') {
           return { ...context, formData: { ...context.formData, name: event.payload } };
@@ -115,9 +124,9 @@ let pageMachine = Machine<Context, Actions>(
           return { ...context, formData: { ...context.formData, phoneType: event.payload } };
         }
       }),
-      setResponse: assign((context, event) => {
+      setComments: assign((context, event) => {
         if (event.type === 'done.invoke.uploadComment') {
-          return { response: event.data };
+          return { comments: event.data.comments };
         }
       }),
       setError: assign((context, event) => {
@@ -137,7 +146,7 @@ let pageMachine = Machine<Context, Actions>(
 let PhonePage: React.FunctionComponent<Props> = (props) => {
   let { data, isValidPhoneNumber } = props;
   let [state, send] = useMachine(pageMachine, {
-    context: { phoneNumber: data?.phoneNumber },
+    context: { phoneNumber: data?.phoneNumber, comments: data?.comments },
   });
   let router = useRouter();
 
@@ -176,10 +185,10 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
     <div>
       {data && (
         <header className="p-6 text-center">
-          <PhoneNumber phone={data.phoneNumber} className="block mb-2"></PhoneNumber>
+          <PhoneNumber phone={state.context.phoneNumber} className="block mb-2"></PhoneNumber>
           <div className="flex justify-center space-x-4 text-sm text-gray-600">
             <ViewCount count={34}></ViewCount>
-            <MessageCount count={data.comments.length}></MessageCount>
+            <MessageCount count={state.context.comments.length}></MessageCount>
             <div>
               Belongs to <strong>Megafon</strong>
             </div>
@@ -223,8 +232,8 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
           <h1 className="container font-bold text-lg mb-4">Comments</h1>
 
           <ul>
-            {data.comments.map((comment) => (
-              <li className="flex flex-col shadow rounded p-4 space-y-2 mb-4">
+            {state.context.comments.map((comment) => (
+              <li key={comment.id} className="flex flex-col shadow rounded p-4 space-y-2 mb-4">
                 {comment.content && (
                   <div className="flex items-center space-x-4">
                     <div>
@@ -362,10 +371,12 @@ export let getStaticProps: GetStaticProps = async (context) => {
       .collection('phones')
       .findOne({ phoneNumber: parsedPhoneNumber.normalized }, { projection: { _id: 0 } });
 
-    let result = data ?? { phoneNumber: parsedPhoneNumber.normalized, comments: [] };
+    let result = serializePhoneData(
+      data ?? { phoneNumber: parsedPhoneNumber.normalized, comments: [] },
+    );
     return {
       props: {
-        data: { ...result },
+        data: result,
         key: phoneNumber,
         isValidPhoneNumber,
       },

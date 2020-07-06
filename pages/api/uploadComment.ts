@@ -1,6 +1,7 @@
+import { createComment } from '@self/lib/createComment';
 import withDatabase from '@self/lib/middleware/withDatabase';
 import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
-import { DBRequestHandler } from '@self/lib/types';
+import { DBRequestHandler, PhoneData } from '@self/lib/types';
 
 let uploadComment: DBRequestHandler = async (req, res) => {
   let { phoneNumber, content, author, phoneType } = JSON.parse(req.body);
@@ -16,15 +17,16 @@ let uploadComment: DBRequestHandler = async (req, res) => {
     return res.json({ status: 'error', message: 'Incorrect phone number format' });
   }
 
-  await req.db
-    .collection('phones')
-    .updateOne(
+  let newComment = createComment({ phoneType, content, author });
+  let { value } = await req.db
+    .collection<PhoneData>('phones')
+    .findOneAndUpdate(
       { phoneNumber: parsedPhoneNumber.normalized },
-      { $push: { comments: { content, author, phoneType } } },
-      { upsert: true },
+      { $push: { comments: newComment } },
+      { upsert: true, projection: { _id: 0 } },
     );
 
-  res.json({ status: 'ok' });
+  res.json({ status: 'ok', data: { ...value, comments: [...value.comments, newComment] } });
 };
 
 export default withDatabase(uploadComment);

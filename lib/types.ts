@@ -50,13 +50,17 @@ export interface SerializedPost {
 
 export interface PhoneData {
   phoneNumber: string;
-  comments: Comment[];
+  comments: UserComment[];
 }
 
-export interface Comment {
+export interface UserComment {
+  id: string;
   author: string;
   content: string;
-  phoneType: string;
+  phoneType: PhoneType;
+  createdAt: Date;
+  likes: number;
+  dislikes: number;
 }
 
 export type PhoneType = 'scam' | 'ads' | 'pranks';
