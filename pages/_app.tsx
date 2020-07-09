@@ -35,7 +35,7 @@ let App: AppType = (props) => {
         <nav className="pt-1">
           <ul className="flex space-x-4">
             <li>
-              <Link href="/">
+              <Link href="/browse/[pageNumber]" as={`/browse/1`}>
                 <a className="text-gray-600 hover:text-gray-900">Browse</a>
               </Link>
             </li>

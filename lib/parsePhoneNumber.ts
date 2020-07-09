@@ -1,5 +1,5 @@
 export function parsePhoneNumber(phoneNumber: string) {
-  let regex = /(8|\+?7)?(\d{3})(\d{3})-?(\d{2})-?(\d{2})/;
+  let regex = /^(8|\+?7)?(\d{3})(\d{3})-?(\d{2})-?(\d{2})$/;
   let normalized = phoneNumber.replace(/\D/g, '');
 
   if (regex.test(normalized)) {
