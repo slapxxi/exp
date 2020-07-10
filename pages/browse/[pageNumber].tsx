@@ -1,3 +1,4 @@
+import Pagination from '@self/components/Pagination';
 import { calcPages } from '@self/lib/calcPages';
 import connectDb from '@self/lib/connectDb';
 import { PhoneData } from '@self/lib/types';
@@ -7,7 +8,7 @@ import Link from 'next/link';
 interface Props {
   phones: PhoneData[];
   pages: number[];
-  pageNumber: string;
+  pageNumber: number;
 }
 
 let PhonesPage: React.FunctionComponent<Props> = (props) => {
@@ -25,29 +26,35 @@ let PhonesPage: React.FunctionComponent<Props> = (props) => {
           </li>
         ))}
       </ul>
-      <ul>
-        {pages.map((p) => (
-          <li>
-            <Link href="/browse/[pageNumber]" as={`/browse/${p}`}>
-              <a>{p}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
+
+      {pages.length > 1 && (
+        <Pagination>
+          {pages.map((p) => (
+            <Pagination.Button
+              key={p}
+              active={p === pageNumber}
+              href="/browse/[pageNumber]"
+              as={`/browse/${p}`}
+            >
+              {p}
+            </Pagination.Button>
+          ))}
+        </Pagination>
+      )}
     </div>
   );
 };
+
+const PAGE_SIZE = 50;
 
 export let getStaticPaths: GetStaticPaths = async () => {
   let db = await connectDb();
   let numberOfPhones = await db.collection('phones').count();
   return {
-    paths: calcPages(numberOfPhones, 1).map((n) => ({ params: { pageNumber: `${n}` } })),
+    paths: calcPages(numberOfPhones, PAGE_SIZE).map((n) => ({ params: { pageNumber: `${n}` } })),
     fallback: false,
   };
 };
-
-const PAGE_SIZE = 1;
 
 export let getStaticProps: GetStaticProps = async (context) => {
   let { params } = context;
@@ -69,10 +76,11 @@ export let getStaticProps: GetStaticProps = async (context) => {
       },
     ])
     .skip(skip)
-    .limit(1)
+    .limit(PAGE_SIZE)
     .toArray();
   return {
-    props: { phones: result, pageNumber: params.pageNumber, pages },
+    props: { phones: result, pageNumber, pages },
+    unstable_revalidate: 1,
   };
 };
 

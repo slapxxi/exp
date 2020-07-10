@@ -26,6 +26,10 @@ let uploadComment: DBRequestHandler = async (req, res) => {
       { upsert: true, projection: { _id: 0 } },
     );
 
+  if (value === null) {
+    res.json({ status: 'ok', data: { phoneNumber, comments: [newComment] } });
+  }
+
   res.json({ status: 'ok', data: { ...value, comments: [...value.comments, newComment] } });
 };
 
