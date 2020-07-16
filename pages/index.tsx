@@ -22,7 +22,7 @@ let IndexPage: React.FunctionComponent<Props> = (props) => {
     <div className="p-4">
       <h1 className="my-4 text-xl">Recent Comments</h1>
 
-      <UserComment comment={exampleComment} phoneNumber={'89000000000'}></UserComment>
+      <UserComment comment={exampleComment} phoneNumber={'89000000000'} loading></UserComment>
 
       <Pagination>
         <Pagination.First href="/" as="/">

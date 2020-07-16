@@ -55,10 +55,10 @@ let pageMachine = Machine<Context, Actions>(
           CHANGE_NAME: { actions: 'changeName' },
           CHANGE_COMMENT: { actions: 'changeComment' },
           CHANGE_TYPE: { actions: 'changeType' },
-          SUBMIT: [{ target: 'fetching', cond: 'isValidFormData' }, { target: 'formError' }],
+          SUBMIT: [{ target: 'uploading', cond: 'isValidFormData' }, { target: 'formError' }],
         },
       },
-      fetching: {
+      uploading: {
         invoke: {
           src: 'uploadComment',
           onError: { target: 'fetchError', actions: 'setError' },
@@ -69,7 +69,7 @@ let pageMachine = Machine<Context, Actions>(
         on: {
           CHANGE_NAME: { actions: 'changeName' },
           CHANGE_TYPE: { actions: 'changeType' },
-          SUBMIT: { target: 'fetching', cond: 'isValidFormData' },
+          SUBMIT: { target: 'uploading', cond: 'isValidFormData' },
         },
       },
       fetchError: {},
@@ -78,8 +78,8 @@ let pageMachine = Machine<Context, Actions>(
   },
   {
     services: {
-      uploadComment: (context, event) => {
-        return fetch('/api/uploadComment', {
+      uploadComment: async (context, event) => {
+        let r = await fetch('/api/uploadComment', {
           method: 'post',
           body: JSON.stringify({
             author: context.formData.name,
@@ -87,14 +87,15 @@ let pageMachine = Machine<Context, Actions>(
             phoneNumber: context.phoneNumber,
             phoneType: context.formData.phoneType,
           }),
-        })
-          .then((r) => r.json())
-          .then((res) => {
-            if (res.status === 'ok') {
-              return res.data;
-            }
-            throw new Error(res.message);
-          });
+        });
+
+        let res = await r.json();
+
+        if (res.status === 'ok') {
+          return res.data;
+        }
+
+        throw new Error(res.message);
       },
     },
     actions: {
@@ -224,8 +225,22 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
           <h1 className="container font-bold text-lg mb-4">Comments</h1>
 
           <ul>
+            {state.matches('uploading') && (
+              <UserComment
+                comment={{
+                  id: 'unique',
+                  author: state.context.formData.name,
+                  content: state.context.formData.content,
+                  phoneType: state.context.formData.phoneType as PhoneType,
+                  createdAt: new Date(),
+                  likes: 0,
+                  dislikes: 0,
+                }}
+                loading
+              ></UserComment>
+            )}
             {state.context.comments.map((comment) => (
-              <UserComment comment={comment}></UserComment>
+              <UserComment key={comment.id} comment={comment}></UserComment>
             ))}
           </ul>
         </div>
@@ -237,7 +252,7 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
         </div>
       )}
 
-      {!state.matches('finished') && (
+      {!state.matches('finished') && (!state.matches('uploading') as boolean) && (
         <>
           <div className="container">
             <h1 className="font-bold text-lg">Leave Comment</h1>

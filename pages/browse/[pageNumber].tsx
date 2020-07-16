@@ -37,7 +37,7 @@ const PAGE_SIZE = 50;
 
 export let getStaticPaths: GetStaticPaths = async () => {
   let db = await connectDb();
-  let numberOfPhones = await db.collection('phones').count();
+  let numberOfPhones = await db.collection('phones').countDocuments();
   return {
     paths: calcPages(numberOfPhones, PAGE_SIZE).map((n) => ({ params: { pageNumber: `${n}` } })),
     fallback: false,
