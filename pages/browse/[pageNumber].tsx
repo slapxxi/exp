@@ -1,4 +1,4 @@
-import Pagination from '@self/components/Pagination';
+import Pager from '@self/components/Pager';
 import { calcPages } from '@self/lib/calcPages';
 import connectDb from '@self/lib/connectDb';
 import { PhoneData } from '@self/lib/types';
@@ -17,7 +17,8 @@ let PhonesPage: React.FunctionComponent<Props> = (props) => {
   return (
     <div className="container">
       <h1 className="title">Phones</h1>
-      <ul className="grid grid-cols-4 my-4">
+
+      <ul className="grid grid-cols-3 gap-2 md:gap-4 md:grid-cols-5 my-4">
         {phones.map((p) => (
           <li key={p.phoneNumber}>
             <Link href="/phones/[pid]" as={`/phones/${p.phoneNumber}`}>
@@ -27,20 +28,7 @@ let PhonesPage: React.FunctionComponent<Props> = (props) => {
         ))}
       </ul>
 
-      {pages.length > 1 && (
-        <Pagination>
-          {pages.map((p) => (
-            <Pagination.Button
-              key={p}
-              active={p === pageNumber}
-              href="/browse/[pageNumber]"
-              as={`/browse/${p}`}
-            >
-              {p}
-            </Pagination.Button>
-          ))}
-        </Pagination>
-      )}
+      <Pager pages={pages} currentPage={pageNumber}></Pager>
     </div>
   );
 };
@@ -61,7 +49,7 @@ export let getStaticProps: GetStaticProps = async (context) => {
   let pageNumber = parseInt(params.pageNumber as string, 10);
   let skip = pageNumber === 1 ? 0 : pageNumber * PAGE_SIZE - PAGE_SIZE;
   let db = await connectDb();
-  let pages = calcPages(await db.collection('phones').count(), PAGE_SIZE);
+  let pages = calcPages(await db.collection('phones').countDocuments(), PAGE_SIZE);
   let result = await db
     .collection('phones')
     .aggregate([

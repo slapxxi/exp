@@ -1,15 +1,20 @@
-import Link from 'next/link';
-import { Eye, MessageCircle } from 'react-feather';
+import Pagination from '@self/components/Pagination';
+import UserComment from '@self/components/UserComment';
+import { PhoneType } from '@self/lib/types';
 
 interface Props {
   tasks: any[];
 }
 
 let exampleComment = {
+  id: 'unique',
   author: 'Maria',
   content: 'Very bad people',
   phone: '4993009765',
   createdAt: new Date(),
+  phoneType: 'scam' as PhoneType,
+  likes: 0,
+  dislikes: 0,
 };
 
 let IndexPage: React.FunctionComponent<Props> = (props) => {
@@ -17,42 +22,25 @@ let IndexPage: React.FunctionComponent<Props> = (props) => {
     <div className="p-4">
       <h1 className="my-4 text-xl">Recent Comments</h1>
 
-      <div className="my-4">
-        <div className="rounded border border-gray-400 overflow-hidden">
-          <header className="flex space-x-4 p-2 bg-gray-200">
-            <span className="mr-auto">{exampleComment.author}</span>
-            <span className="flex items-center space-x-1 text-gray-600">
-              <Eye size={18} className="inline text-gray-500"></Eye>
-              <span>100</span>
-            </span>
-            <span className="flex items-center space-x-1 text-gray-600">
-              <MessageCircle size={18} className="inline text-gray-500"></MessageCircle>
-              <span>
-                <Link href="/phones/[pid]" as={`/phones/${exampleComment.phone}`}>
-                  <a className="hover:text-gray-800">32</a>
-                </Link>
-              </span>
-            </span>
-          </header>
-          <div className="p-2">
-            <p>{exampleComment.content}</p>
-          </div>
-          <footer className="flex flex-wrap p-2 text-gray-600 justify-end space-x-2">
-            <small>{exampleComment.createdAt.toUTCString()}</small>
-            <small>
-              Marked as <strong>Scam</strong>
-            </small>
-          </footer>
-        </div>
-      </div>
+      <UserComment comment={exampleComment} phoneNumber={'89000000000'}></UserComment>
 
-      <ul className="flex">
-        <li className="pagination-btn rounded-tl rounded-bl">«</li>
-        <li className="pagination-btn">‹</li>
-        <li className="pagination-btn">…</li>
-        <li className="pagination-btn">›</li>
-        <li className="pagination-btn border-r rounded-tr rounded-br">»</li>
-      </ul>
+      <Pagination>
+        <Pagination.First href="/" as="/">
+          «
+        </Pagination.First>
+        <Pagination.Button href="/" as="/">
+          ‹
+        </Pagination.Button>
+        <Pagination.Button href="/" as="/">
+          1
+        </Pagination.Button>
+        <Pagination.Button href="/" as="/">
+          ›
+        </Pagination.Button>
+        <Pagination.Last href="/" as="/">
+          »
+        </Pagination.Last>
+      </Pagination>
     </div>
   );
 };

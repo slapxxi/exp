@@ -1,6 +1,6 @@
-import { RequestHandler } from '@self/lib/types';
+import { NextApiHandler } from 'next';
 
-let login: RequestHandler = async (req, res) => {
+let login: NextApiHandler = async (req, res) => {
   res.setHeader('Set-Cookie', `token=wow; Expires=${new Date(Date.now() + secondsToMs(120))}`);
   res.json({ token: 'wow' });
 };

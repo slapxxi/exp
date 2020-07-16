@@ -1,9 +1,9 @@
 import { createComment } from '@self/lib/createComment';
 import withDatabase from '@self/lib/middleware/withDatabase';
 import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
-import { DBRequestHandler, PhoneData } from '@self/lib/types';
+import { DbApiHandler, PhoneData } from '@self/lib/types';
 
-let uploadComment: DBRequestHandler = async (req, res) => {
+let uploadComment: DbApiHandler = async (req, res) => {
   let { phoneNumber, content, author, phoneType } = JSON.parse(req.body);
   let parsedPhoneNumber: ReturnType<typeof parsePhoneNumber>;
 

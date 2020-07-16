@@ -31,4 +31,12 @@
   line-height: 1.15;
 }
 
+.link {
+  @apply text-blue-600;
+}
+
+.link:hover {
+  @apply text-blue-500 underline;
+}
+
 @tailwind utilities;

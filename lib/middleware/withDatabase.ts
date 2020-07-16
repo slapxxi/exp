@@ -1,13 +1,13 @@
-import { MiddlewareRequest, RequestHandler } from '@self/lib/types';
+import { MiddlewareRequest } from '@self/lib/types';
 import { MongoClient } from 'mongodb';
-import { NextApiResponse } from 'next';
+import { NextApiHandler, NextApiResponse } from 'next';
 
 let client = new MongoClient(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: false,
 });
 
-function withDatabase(handler: RequestHandler) {
+function withDatabase(handler: NextApiHandler) {
   return (req: MiddlewareRequest, res: NextApiResponse) => {
     if (!client.isConnected()) {
       return client.connect().then(() => {

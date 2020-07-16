@@ -67,6 +67,7 @@ let App: AppType = (props) => {
             onChange={handleChangePhoneNumber}
           />
           <button
+            id="submit"
             type="submit"
             className="block w-full flex-1 bg-blue-700 rounded text-white px-4 py-2 hover:bg-blue-600"
           >

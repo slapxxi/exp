@@ -1,10 +1,11 @@
 import { MessageCount } from '@self/components/MessageCount';
 import PhoneNumber from '@self/components/PhoneNumber';
+import UserComment from '@self/components/UserComment';
 import { ViewCount } from '@self/components/ViewCount';
 import connectDb from '@self/lib/connectDb';
 import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
 import { serializePhoneData } from '@self/lib/serializePhoneData';
-import { PhoneData, PhoneType, UserComment } from '@self/lib/types';
+import type { PhoneData, PhoneType, UserComment as IUserComment } from '@self/lib/types';
 import { useMachine } from '@xstate/react';
 import { reverse, sortBy } from 'lodash';
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -18,19 +19,10 @@ interface Props {
 
 interface Context {
   phoneNumber: string;
-  comments: UserComment[];
+  comments: IUserComment[];
   formData: { phoneType: '' | PhoneType; content: string; name: string };
   error: Error;
   response: any;
-}
-
-interface Schema {
-  states: {
-    idle: {};
-    fetching: {};
-    formError: {};
-    fetchError: {};
-  };
 }
 
 type Actions =
@@ -173,9 +165,9 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
 
   if (!isValidPhoneNumber) {
     return (
-      <div>
+      <div data-testid="error">
         <div className="container p-4 bg-red-200 rounded border border-red-400 text-red-900 my-4">
-          Phone number is not valid! Redirecting back...
+          Phone number is not valid!
         </div>
       </div>
     );
@@ -233,22 +225,7 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
 
           <ul>
             {state.context.comments.map((comment) => (
-              <li key={comment.id} className="flex flex-col shadow rounded p-4 space-y-2 mb-4">
-                {comment.content && (
-                  <div className="flex items-center space-x-4">
-                    <div>
-                      <img src="" alt="" className="rounded-full w-8 h-8 bg-gray-300" />
-                    </div>
-                    <span>{comment.content}</span>
-                  </div>
-                )}
-                <footer className="flex justify-between space-x-4 text-gray-600">
-                  <small>{comment.author ? comment.author : 'Anonymous'}</small>
-                  <small>
-                    Marked as <strong>{comment.phoneType}</strong>
-                  </small>
-                </footer>
-              </li>
+              <UserComment comment={comment}></UserComment>
             ))}
           </ul>
         </div>

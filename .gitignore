@@ -17,7 +17,7 @@
 
 # misc
 .DS_Store
-.env*
+.env
 
 # debug
 npm-debug.log*
@@ -28,3 +28,6 @@ yarn-error.log*
 
 /.vscode/vscode-chrome-debug-userdatadir
 .vercel
+
+# cypress
+cypress/integration/examples

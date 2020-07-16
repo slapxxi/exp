@@ -1,7 +1,7 @@
 import withDatabase from '@self/lib/middleware/withDatabase';
-import { RequestHandler } from '@self/lib/types';
+import { NextApiHandler } from 'next';
 
-function withMiddleware(handler: RequestHandler) {
+function withMiddleware(handler: NextApiHandler) {
   return withDatabase(handler);
 }
 
