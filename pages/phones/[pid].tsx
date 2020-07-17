@@ -27,7 +27,7 @@ interface Context {
 }
 
 type Actions =
-  | { type: 'done.invoke.uploadComment'; data: any }
+  | { type: 'done.invoke.uploadComment'; data: PhoneData }
   | { type: 'error.platform.uploadComment'; data: any }
   | { type: 'CHANGE_NAME'; payload: string }
   | { type: 'CHANGE_COMMENT'; payload: string }
@@ -256,6 +256,7 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
             )}
             {state.context.comments.map((comment) => (
               <UserComment
+                fresh={Date.now() - new Date(comment.createdAt).getTime() < 300000}
                 ref={final && final === comment.id ? refCb : null}
                 key={comment.id}
                 comment={comment}
