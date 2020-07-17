@@ -7,9 +7,10 @@ import { parsePhoneNumber } from '@self/lib/parsePhoneNumber';
 import { serializePhoneData } from '@self/lib/serializePhoneData';
 import type { PhoneData, PhoneType, UserComment as IUserComment } from '@self/lib/types';
 import { useMachine } from '@xstate/react';
-import { reverse, sortBy } from 'lodash';
+import { last, reverse, sortBy } from 'lodash';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useCallback, useState } from 'react';
 import { assign, Machine } from 'xstate';
 
 interface Props {
@@ -73,7 +74,10 @@ let pageMachine = Machine<Context, Actions>(
         },
       },
       fetchError: {},
-      finished: {},
+      finished: {
+        type: 'final',
+        entry: 'onFinish',
+      },
     },
   },
   {
@@ -138,8 +142,19 @@ let pageMachine = Machine<Context, Actions>(
 
 let PhonePage: React.FunctionComponent<Props> = (props) => {
   let { data, isValidPhoneNumber } = props;
+  let [final, setFinal] = useState(null);
+  let refCb = useCallback((node) => {
+    node?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
   let [state, send] = useMachine(pageMachine, {
     context: { phoneNumber: data?.phoneNumber, comments: data?.comments },
+    actions: {
+      onFinish: (context, action) => {
+        if (action.type === 'done.invoke.uploadComment') {
+          setFinal(last(action.data.comments).id);
+        }
+      },
+    },
   });
   let router = useRouter();
 
@@ -240,7 +255,11 @@ let PhonePage: React.FunctionComponent<Props> = (props) => {
               ></UserComment>
             )}
             {state.context.comments.map((comment) => (
-              <UserComment key={comment.id} comment={comment}></UserComment>
+              <UserComment
+                ref={final && final === comment.id ? refCb : null}
+                key={comment.id}
+                comment={comment}
+              ></UserComment>
             ))}
           </ul>
         </div>

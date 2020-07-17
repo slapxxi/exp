@@ -1,5 +1,6 @@
 import type { UserComment as IUserComment } from '@self/lib/types';
 import Link from 'next/link';
+import React from 'react';
 import LoadingBg from './LoadingBg';
 import PhoneNumber from './PhoneNumber';
 
@@ -9,11 +10,11 @@ interface Props {
   loading?: boolean;
 }
 
-let UserComment: React.FunctionComponent<Props> = (props) => {
+let UserComment = React.forwardRef<any, Props>((props, ref) => {
   let { comment, phoneNumber, loading = false } = props;
 
   return (
-    <li key={comment.id} className="flex flex-col shadow rounded p-4 space-y-4 mb-4">
+    <li ref={ref} className="flex flex-col shadow rounded p-4 space-y-4 mb-4 overflow-hidden">
       <header className="flex text-gray-600">
         <LoadingBg loading={loading} className="text-sm">
           <small className="mr-4">{comment.author ? comment.author : 'Anonymous'}</small>
@@ -52,6 +53,6 @@ let UserComment: React.FunctionComponent<Props> = (props) => {
       </footer>
     </li>
   );
-};
+});
 
 export default UserComment;

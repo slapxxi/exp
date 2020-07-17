@@ -16,7 +16,9 @@ let PhonesPage: React.FunctionComponent<Props> = (props) => {
 
   return (
     <div className="container">
-      <h1 className="title">Phones</h1>
+      <h1 className="title my-4">Phones</h1>
+
+      {phones.length === 0 && <p className="text-center">There are no phones yet.</p>}
 
       <ul className="grid grid-cols-3 gap-2 md:gap-4 md:grid-cols-5 my-4">
         {phones.map((p) => (

@@ -13,7 +13,6 @@ if (numberOfEntries > 1_000_000) {
 }
 
 for (let index = 0; index < numberOfEntries; index++) {
-  console.log(index);
   docs.push({
     id: index,
     phoneNumber: `8900${preface(index, 7)}`,
