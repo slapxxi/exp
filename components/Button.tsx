@@ -10,7 +10,7 @@ let Button: React.FunctionComponent<Props> = (props) => {
       className={`bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-600 ${className}`}
       {...rest}
     >
-      Submit
+      {children}
     </button>
   );
 };

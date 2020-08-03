@@ -1,12 +1,21 @@
 import { NextApiHandler } from 'next';
+import { withIronSession } from 'next-iron-session';
 
 let login: NextApiHandler = async (req, res) => {
-  res.setHeader('Set-Cookie', `token=wow; Expires=${new Date(Date.now() + secondsToMs(120))}`);
-  res.json({ token: 'wow' });
+  req.session.set('username', { username: 'pp' });
+  req.session.set('password', { pass: 'pp' });
+  await req.session.save();
+  res.json({ status: 'ok' });
 };
 
 function secondsToMs(n: number) {
   return n * 1000;
 }
 
-export default login;
+export default withIronSession(login, {
+  cookieName: 'session',
+  password: 'UKEKmXRMs4CnoNjQELmpLTfLFpL5PapM5V',
+  cookieOptions: {
+    secure: false,
+  },
+});

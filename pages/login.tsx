@@ -1,16 +1,11 @@
 import Button from '@self/components/Button';
 import Input from '@self/components/Input';
-import { atom, useRecoilState } from 'recoil';
+import { useState } from 'react';
 
 interface Props {}
 
-export let userDataState = atom({
-  key: 'userdata',
-  default: { username: '' },
-});
-
 let LoginPage: React.FunctionComponent<Props> = () => {
-  let [userData, setUserData] = useRecoilState(userDataState);
+  let [userData, setUserData] = useState({ username: '' });
 
   function handleSetUsername(event: React.ChangeEvent<HTMLInputElement>) {
     setUserData((prev) => ({ username: event.target.value }));

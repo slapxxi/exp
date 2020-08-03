@@ -1,36 +1,14 @@
-import { NextApiHandler } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
 
-let options = {
-  site: process.env.SITE ?? 'http://localhost:3000',
-  database: process.env.MONGODB_URI,
-  session: {
-    jwt: true,
-  },
+const options = {
   providers: [
-    Providers.Credentials({
-      name: 'Credentials',
-      credentials: {
-        username: { label: 'Username', type: 'text', placeholder: 'username' },
-        password: { label: 'Password', type: 'password' },
-      },
-      authorize: async (credentials: any) => {
-        const user = { id: 1, name: 'J Smith', email: 'jsmith@example.com' };
-
-        if (user) {
-          // Any user object returned here will be saved in the JSON Web Token
-          return Promise.resolve(user);
-        } else {
-          return Promise.resolve(null);
-        }
-      },
+    Providers.GitHub({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
 };
 
-let handler: NextApiHandler = (req, res) => {
-  return NextAuth(req, res, options);
-};
-
-export default handler;
+export default (req: NextApiRequest, res: NextApiResponse) => NextAuth(req, res, options);

@@ -392,13 +392,13 @@ export let getStaticProps: GetStaticProps = async (context) => {
         key: phoneNumber,
         isValidPhoneNumber,
       },
-      unstable_revalidate: 1,
+      revalidate: 1,
     };
   }
 
   return {
     props: { key: phoneNumber, isValidPhoneNumber },
-    unstable_revalidate: 1,
+    revalidate: 1,
   };
 };
 

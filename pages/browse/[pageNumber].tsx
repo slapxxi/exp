@@ -70,7 +70,7 @@ export let getStaticProps: GetStaticProps = async (context) => {
     .toArray();
   return {
     props: { phones: result, pageNumber, pages },
-    unstable_revalidate: 1,
+    revalidate: 1,
   };
 };
 

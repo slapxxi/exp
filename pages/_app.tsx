@@ -1,11 +1,11 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
+import { Provider } from 'next-auth/client';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { LogIn } from 'react-feather';
-import { RecoilRoot } from 'recoil';
 import '../styles/index.css';
 
 let App: AppType = (props) => {
@@ -76,9 +76,9 @@ let App: AppType = (props) => {
         </div>
       </form>
 
-      <RecoilRoot>
-        <Component {...pageProps}></Component>
-      </RecoilRoot>
+      <Provider session={pageProps.session}>
+        <Component {...pageProps} />
+      </Provider>
 
       <div id="modal"></div>
     </div>
