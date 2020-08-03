@@ -38,6 +38,7 @@
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
     "react-modal": "^3.11.2",
+    "react-spring": "^8.0.27",
     "react-three-fiber": "^4.2.18",
     "recoil": "^0.0.10",
     "sass": "^1.26.10",
