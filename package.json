@@ -26,6 +26,7 @@
     "bootstrap": "^4.5.0",
     "cypress": "^4.11.0",
     "date-fns": "^2.15.0",
+    "drei": "^0.0.72",
     "emotion-theming": "^10.0.27",
     "isomorphic-unfetch": "^3.0.0",
     "lodash": "^4.17.19",
@@ -62,7 +63,10 @@
     "@types/sass": "^1.16.0",
     "@types/sharp": "^0.25.0",
     "@types/uuid": "^8.0.0",
+    "babel-plugin-glsl": "^1.0.0",
+    "babel-plugin-macros": "^2.8.0",
     "dotenv": "^8.2.0",
+    "glslify": "^7.0.0",
     "jest": "^26.2.2",
     "typescript": "^3.9.7"
   }
