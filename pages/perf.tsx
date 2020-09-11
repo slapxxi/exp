@@ -7,4 +7,5 @@ interface Props {}
 let Perf: React.FunctionComponent<Props> = () => {
   return <DynamicComponent></DynamicComponent>;
 };
+
 export default Perf;

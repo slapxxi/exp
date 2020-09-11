@@ -8,10 +8,6 @@ let login: NextApiHandler = async (req, res) => {
   res.json({ status: 'ok' });
 };
 
-function secondsToMs(n: number) {
-  return n * 1000;
-}
-
 export default withIronSession(login, {
   cookieName: 'session',
   password: 'UKEKmXRMs4CnoNjQELmpLTfLFpL5PapM5V',

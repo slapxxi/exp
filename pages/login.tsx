@@ -1,10 +1,13 @@
 import Button from '@self/components/Button';
 import Input from '@self/components/Input';
-import { useState } from 'react';
+import useStore from '@self/lib/store';
+import { useCallback, useState } from 'react';
 
 interface Props {}
 
 let LoginPage: React.FunctionComponent<Props> = () => {
+  let count = useStore(useCallback((state) => state.bears, []));
+  let inc = useStore(useCallback((state) => state.inc, []));
   let [userData, setUserData] = useState({ username: '' });
 
   function handleSetUsername(event: React.ChangeEvent<HTMLInputElement>) {
@@ -13,7 +16,10 @@ let LoginPage: React.FunctionComponent<Props> = () => {
 
   return (
     <div className="container">
+      <p>Bears: {count}</p>
+      <button onClick={inc}>Increment</button>
       <h1 className="title">Login</h1>
+
       <form action="">
         <div className="my-4">
           <label htmlFor="username" className="block mb-4">
