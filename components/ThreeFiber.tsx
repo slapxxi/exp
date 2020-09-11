@@ -42,15 +42,10 @@ let BasicMaterial = shaderMaterial(
 
   void main() {
     vec2 st = gl_FragCoord.xy / uResolution;
-    // vec3 texture = texture2D(uTexture, vUv).rgb;
+    vec3 texture = texture2D(uTexture, vUv).rgb;
+    vec3 color = vec3(0.3);
 
-    vec2 uv = vUv + (sin(mod(uTime*10., PI*2.)) / 120.);
-
-    float r = texture2D(uTexture, uv).r;
-    float g = texture2D(uTexture, vUv).g;
-    float b = texture2D(uTexture, vUv).b;
-
-    gl_FragColor = vec4(r,g,b, 1.);
+    gl_FragColor = vec4(texture, 1.);
   }`,
   null,
 );
@@ -61,9 +56,10 @@ let Component: React.FunctionComponent<Props> = () => {
   return (
     <>
       <Canvas
-        onCreated={({ gl }) => {
-          gl.setClearColor('#202023');
-        }}
+        style={{ width: 100, height: 100 }}
+        // onCreated={({ gl }) => {
+        //   gl.setClearColor('#202023');
+        // }}
       >
         <ambientLight castShadow></ambientLight>
         <spotLight intensity={1} position={[10, 1, 10]} castShadow></spotLight>
