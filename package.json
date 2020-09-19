@@ -2,6 +2,21 @@
   "name": "experimental",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    ">0.3%",
+    "not ie 11",
+    "not dead",
+    "not op_mini all"
+  ],
+  "babelMacros": {
+    "twin": {
+      "config": "tailwind.config.js",
+      "preset": "emotion",
+      "debugProp": true,
+      "debugPlugins": false,
+      "debug": false
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -17,6 +32,7 @@
     "compress": "node ./scripts/compress_images.js"
   },
   "dependencies": {
+    "@emotion/babel-preset-css-prop": "^10.0.27",
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
     "@types/jest": "^26.0.10",
@@ -51,6 +67,7 @@
     "tailwindcss": "^1.8.6",
     "three": "^0.120.1",
     "threejs-meshline": "^2.0.11",
+    "twin.macro": "^1.9.0",
     "use-cannon": "^0.5.1",
     "uuid": "^8.3.0",
     "xstate": "^4.13.0",

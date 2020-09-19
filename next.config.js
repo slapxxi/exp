@@ -7,6 +7,6 @@ module.exports = {
     MONGODB_URI: process.env.MONGODB_URI,
   },
   resolutions: {
-    webpack: '^5.0.0-beta.22',
+    webpack: '^5.0.0-beta.32',
   },
 };
