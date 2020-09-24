@@ -1,6 +1,4 @@
-interface Props {}
-
-let IndexPage: React.FunctionComponent<Props> = () => {
+let IndexPage: React.FunctionComponent<any> = () => {
   return <div>hw</div>;
 };
 
