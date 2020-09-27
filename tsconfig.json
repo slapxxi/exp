@@ -2,16 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "ES5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext",
-      "webworker"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
     "paths": {
-      "@self/*": [
-        "./*"
-      ]
+      "@self/*": ["./*"]
     },
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -29,15 +22,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "exclude": [
-    ".next",
-    "build",
-    "dist",
-    "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": [".next", "build", "dist", "node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
