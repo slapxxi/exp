@@ -22,6 +22,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "exclude": [".next", "build", "dist", "node_modules"],
+  "exclude": [".next", ".vercel", "build", "dist", "node_modules", "cypress", ".vscode"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
