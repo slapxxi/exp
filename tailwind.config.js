@@ -3,7 +3,11 @@ module.exports = {
   mode: 'layers',
   purge: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        ooo: '#19f',
+      },
+    },
   },
   variants: {},
   plugins: [],
