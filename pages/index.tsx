@@ -55,7 +55,7 @@ let IndexPage: React.FunctionComponent<any> = () => {
           top-0 text-indigo-300 select-none`}
           width: 600px;
           will-change: transform;
-          box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
         `}
         style={{ transform: ap.x.interpolate((v) => `translateX(${v}%)`) }}
       >
@@ -321,7 +321,7 @@ let MenuItem = styled.li<{ active?: boolean }>`
   padding-left: 324px;
 
   ::after {
-    ${tw`absolute top-0 bottom-0 bg-red-300`}
+    ${tw`absolute top-0 bottom-0 bg-red-600`}
     content: '';
     left: calc(50% - 80px);
     width: 80px;
