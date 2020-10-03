@@ -42,7 +42,7 @@
     "date-fns": "^2.16.1",
     "drei": "^1.5.7",
     "emotion-theming": "^10.0.27",
-    "jotai": "^0.7.4",
+    "jotai": "^0.8.0",
     "lodash": "^4.17.20",
     "mongodb": "^3.6.2",
     "next": "^9.5.3",
