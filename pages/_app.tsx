@@ -4,6 +4,8 @@ import { defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
 import { AppType } from 'next/dist/next-server/lib/utils';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import {
   ChevronDown,
@@ -33,6 +35,7 @@ const URL = 'https://picsum.photos/200/200';
 
 let App: AppType = (props) => {
   let { Component, pageProps } = props;
+  let router = useRouter();
   let [active, setActive] = useState(false);
   let [menuActive, setMenuActive] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
@@ -48,8 +51,9 @@ let App: AppType = (props) => {
     <ThemeProvider theme={defaultTheme}>
       <div
         css={[
-          tw`grid h-full`,
+          tw`grid h-full box-border`,
           css`
+            max-height: 100vh;
             grid-template-columns: 80px 1fr;
             grid-template-rows: 70px 1fr;
             grid-template-areas: 'sidebar header' 'sidebar content';
@@ -90,11 +94,19 @@ let App: AppType = (props) => {
             >
               <X></X>
             </MenuItem>
-            <MenuItem>
-              <PieChart></PieChart> <span>Profile</span>
+            <MenuItem active={router.pathname === '/'}>
+              <Link href="/" as="/">
+                <MenuLink>
+                  <PieChart></PieChart> <span>Profile</span>
+                </MenuLink>
+              </Link>
             </MenuItem>
-            <MenuItem active={active} onClick={() => setActive(!active)}>
-              <Users></Users> <span>Clients</span>
+            <MenuItem active={router.pathname === '/clients'}>
+              <Link href="/clients" as="/clients">
+                <MenuLink>
+                  <Users></Users> <span>Clients</span>
+                </MenuLink>
+              </Link>
             </MenuItem>
             <MenuItem>
               <Database></Database> <span>Realty</span>
@@ -260,11 +272,19 @@ let App: AppType = (props) => {
             <SidebarItem onClick={() => setMenuActive(!menuActive)}>
               <Menu size={28}></Menu>
             </SidebarItem>
-            <SidebarItem>
-              <PieChart></PieChart>
+            <SidebarItem active={router.pathname === '/'}>
+              <Link href="/" as="/">
+                <SidebarLink>
+                  <PieChart></PieChart>
+                </SidebarLink>
+              </Link>
             </SidebarItem>
-            <SidebarItem active={active} onClick={() => setActive(!active)}>
-              <Users></Users>
+            <SidebarItem active={router.pathname === '/clients'}>
+              <Link href="/clients" as="/clients">
+                <SidebarLink>
+                  <Users></Users>
+                </SidebarLink>
+              </Link>
             </SidebarItem>
             <SidebarItem>
               <Database></Database>
@@ -317,6 +337,14 @@ let App: AppType = (props) => {
     </ThemeProvider>
   );
 };
+
+let SidebarLink = styled.a`
+  ${tw`flex items-center justify-center w-full h-full`}
+`;
+
+let MenuLink = styled(SidebarLink)`
+  ${tw`justify-start space-x-4`}
+`;
 
 let Circle: React.FC<any> = (props) => {
   return (
