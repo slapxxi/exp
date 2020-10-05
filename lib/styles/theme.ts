@@ -1,5 +1,6 @@
 export let defaultTheme = {
   colors: {
+    accent: 'tomato',
     bgItem: 'hsl(225, 5%, 100%)',
     bgContent: 'hsl(225, 5%, 95%)',
     bgHeader: 'hsl(225, 25%, 40%)',
@@ -11,10 +12,11 @@ export let defaultTheme = {
     textSidebar: 'hsl(225, 20%, 65%)',
     textSidebarActive: 'hsl(225, 20%, 100%)',
   },
-} as const;
+};
 
 export let darkTheme = {
   colors: {
+    accent: 'slateblue',
     bgItem: 'hsl(225, 5%, 100%)',
     bgContent: 'hsl(225, 8%, 17%)',
     bgHeader: 'hsl(225, 8%, 14%)',
@@ -26,7 +28,7 @@ export let darkTheme = {
     textSidebar: 'hsl(225, 11%, 48%)',
     textSidebarActive: 'hsl(225, 15%, 78%)',
   },
-} as const;
+};
 
 function hsl(hue: number, saturation: number, lightness: number) {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;

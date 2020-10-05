@@ -1,12 +1,12 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
-import { defaultTheme } from '@self/lib/styles/theme';
+import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ChevronDown,
   Clock,
@@ -39,6 +39,7 @@ let App: AppType = (props) => {
   let [active, setActive] = useState(false);
   let [menuActive, setMenuActive] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
+  let [darkMode, setDarkMode] = useState(false);
 
   let ap = useSpring({
     x: menuActive ? -49 : -100,
@@ -47,8 +48,17 @@ let App: AppType = (props) => {
     },
   });
 
+  useEffect(() => {
+    function handler() {
+      setMenuActive(false);
+    }
+
+    router.events.on('routeChangeComplete', handler);
+    return () => router.events.off('routeChangeComplete', handler);
+  });
+
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={darkMode ? darkTheme : defaultTheme}>
       <div
         css={[
           tw`grid h-full box-border`,
@@ -148,7 +158,7 @@ let App: AppType = (props) => {
               >
                 <Settings></Settings> <span>Settings</span>
               </div>
-              <button>
+              <button onClick={() => setDarkMode(!darkMode)}>
                 <Moon></Moon>
               </button>
             </MenuItem>
@@ -312,7 +322,9 @@ let App: AppType = (props) => {
                 ${tw`mt-auto`}
               `}
             >
-              <Moon></Moon>
+              <button>
+                <Moon onClick={() => setDarkMode(!darkMode)}></Moon>
+              </button>
             </SidebarItem>
             <SidebarItem>
               <Settings></Settings>
@@ -393,10 +405,11 @@ let SidebarItem = styled.li<Themed<{ active?: boolean }>>`
   }
 
   ::after {
-    ${tw`absolute top-0 left-0 bottom-0 bg-crimson`}
+    ${tw`absolute top-0 left-0 bottom-0`}
     content: '';
     width: 4px;
-    transform: ${(props) => (props.active ? 'none' : 'translateX(-4px)')};
+    background: ${({ theme }) => theme.colors.accent};
+    transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
     transition: transform 0.3s;
   }
 `;
@@ -416,12 +429,13 @@ let MenuItem = styled.li<Themed<{ active?: boolean }>>`
   }
 
   ::after {
-    ${tw`absolute top-0 bottom-0 bg-crimson`}
+    ${tw`absolute top-0 bottom-0`}
     content: '';
     left: calc(50% - 80px);
     width: 80px;
     transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
     opacity: ${({ active }) => (active ? '1' : '0')};
+    background: ${({ theme }) => theme.colors.accent};
     will-change: transform, opacity;
     transition: transform 0.3s, opacity 0.3s;
   }
