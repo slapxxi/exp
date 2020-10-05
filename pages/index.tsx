@@ -14,10 +14,10 @@ import {
   LogOut,
   Mail,
   Menu,
+  Moon,
   PieChart,
   Search,
   Settings,
-  Sliders,
   Users,
   Volume2,
   X,
@@ -54,7 +54,7 @@ let IndexPage: React.FunctionComponent<any> = () => {
       <a.div
         css={
           ((theme) => css`
-            ${tw`absolute flex z-10 bottom-0 top-0 select-none`}
+            ${tw`absolute flex z-20 bottom-0 top-0 select-none`}
             width: 600px;
             will-change: transform;
             box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
@@ -65,24 +65,20 @@ let IndexPage: React.FunctionComponent<any> = () => {
         style={{ transform: ap.x.interpolate((v) => `translateX(${v}%)`) }}
       >
         <ul
-          css={[
-            tw`flex flex-col h-full w-full`,
-            css`
-              & ${SidebarItem}:hover {
-                ${tw`text-white cursor-pointer bg-indigo-700`}
-              }
-            `,
-          ]}
+          css={css`
+            ${tw`flex flex-col h-full w-full`}
+          `}
         >
           <MenuItem
             onClick={() => setMenuActive(!menuActive)}
-            css={css`
+            css={(theme) => css`
               ${tw`relative justify-end`}
 
               ::before {
-                ${tw`absolute left-0 right-0 bottom-0 bg-indigo-400 bg-opacity-25`}
+                ${tw`absolute left-0 right-0 bottom-0`}
                 content: '';
                 height: 2px;
+                background: ${theme.colors.bgSidebarActive};
               }
             `}
           >
@@ -118,11 +114,25 @@ let IndexPage: React.FunctionComponent<any> = () => {
           <MenuItem
             css={[
               css`
+                ${tw`justify-between hover:bg-transparent`}
                 margin-top: auto;
+
+                :hover {
+                  color: inherit;
+                }
               `,
             ]}
           >
-            <Settings></Settings> <span>Settings</span>
+            <div
+              css={css`
+                ${tw`flex space-x-4`}
+              `}
+            >
+              <Settings></Settings> <span>Settings</span>
+            </div>
+            <button>
+              <Moon></Moon>
+            </button>
           </MenuItem>
         </ul>
       </a.div>
@@ -131,7 +141,7 @@ let IndexPage: React.FunctionComponent<any> = () => {
       <header
         css={
           ((theme) => css`
-            ${tw`shadow`}
+            ${tw`shadow z-10`}
             grid-area: header;
             background: ${theme.colors.bgHeader};
             color: ${theme.colors.textHeader};
@@ -199,11 +209,6 @@ let IndexPage: React.FunctionComponent<any> = () => {
             </button>
           </HeaderItem>
           <HeaderItem>
-            <button>
-              <Sliders></Sliders>
-            </button>
-          </HeaderItem>
-          <HeaderItem>
             <div
               css={css`
                 ${tw`relative`}
@@ -231,9 +236,13 @@ let IndexPage: React.FunctionComponent<any> = () => {
         css={
           ((theme) =>
             css`
+              ${tw`z-10`}
               grid-area: sidebar;
               background: ${theme.colors.bgSidebar};
               color: ${theme.colors.textSidebar};
+              transform: translateX(0%);
+              transition: transform 0.3s;
+              will-change: transform;
             `) as ThemedCSS
         }
       >
@@ -243,7 +252,7 @@ let IndexPage: React.FunctionComponent<any> = () => {
           `}
         >
           <SidebarItem onClick={() => setMenuActive(!menuActive)}>
-            <Menu></Menu>
+            <Menu size={28}></Menu>
           </SidebarItem>
           <SidebarItem>
             <PieChart></PieChart>
@@ -273,12 +282,13 @@ let IndexPage: React.FunctionComponent<any> = () => {
             <Lock></Lock>
           </SidebarItem>
           <SidebarItem
-            css={[
-              css`
-                margin-top: auto;
-              `,
-            ]}
+            css={css`
+              ${tw`mt-auto`}
+            `}
           >
+            <Moon></Moon>
+          </SidebarItem>
+          <SidebarItem>
             <Settings></Settings>
           </SidebarItem>
         </ul>
@@ -291,6 +301,7 @@ let IndexPage: React.FunctionComponent<any> = () => {
             ${tw`p-4`}
             grid-area: content;
             background: ${theme.colors.bgContent};
+            color: ${theme.colors.textContent};
           `) as ThemedCSS
         }
       >
@@ -317,7 +328,16 @@ let Avatar: React.FC<any> = (props) => {
         <circle cx="50" cy="50" r="50" fill="white"></circle>
       </mask>
       <image href={src} width="100" height="100" mask="url(#mask)" />
-      <circle cx="50" cy="50" r="49" stroke="#fff" fill="none" strokeWidth="2"></circle>
+      <circle
+        cx="50"
+        cy="50"
+        r="49"
+        css={(theme) => css`
+          fill: none;
+          stroke: ${theme.colors.textHeader};
+          stroke-width: 2;
+        `}
+      ></circle>
     </svg>
   );
 };

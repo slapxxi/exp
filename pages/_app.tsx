@@ -5,6 +5,7 @@ import '../styles/index.css';
 
 let App: AppType = (props) => {
   let { Component, pageProps } = props;
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Component {...pageProps} />
