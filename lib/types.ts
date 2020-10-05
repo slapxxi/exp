@@ -1,5 +1,7 @@
+import { InterpolationWithTheme } from '@emotion/core';
 import { Db } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { defaultTheme } from './styles/theme';
 
 export type Maybe<T> = T | undefined;
 
@@ -28,5 +30,15 @@ export interface UserComment {
   likes: number;
   dislikes: number;
 }
+
+export type Theme = {
+  colors: {
+    bgSidebar: string;
+  };
+};
+
+export type Themed<Props = {}> = Props & { theme: typeof defaultTheme };
+
+export type ThemedCSS = InterpolationWithTheme<typeof defaultTheme>;
 
 export type PhoneType = 'scam' | 'ads' | 'pranks';

@@ -1,5 +1,6 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
+import { Themed, ThemedCSS } from '@self/lib/types';
 import React, { useState } from 'react';
 import {
   ChevronDown,
@@ -16,6 +17,7 @@ import {
   PieChart,
   Search,
   Settings,
+  Sliders,
   Users,
   Volume2,
   X,
@@ -50,13 +52,16 @@ let IndexPage: React.FunctionComponent<any> = () => {
     >
       {/* Menu */}
       <a.div
-        css={css`
-          ${tw`absolute flex bg-indigo-800 z-10 bottom-0 
-          top-0 text-indigo-300 select-none`}
-          width: 600px;
-          will-change: transform;
-          box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
-        `}
+        css={
+          ((theme) => css`
+            ${tw`absolute flex z-10 bottom-0 top-0 select-none`}
+            width: 600px;
+            will-change: transform;
+            box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
+            background: ${theme.colors.bgSidebar};
+            color: ${theme.colors.textSidebar};
+          `) as ThemedCSS
+        }
         style={{ transform: ap.x.interpolate((v) => `translateX(${v}%)`) }}
       >
         <ul
@@ -124,14 +129,18 @@ let IndexPage: React.FunctionComponent<any> = () => {
 
       {/* Header */}
       <header
-        css={css`
-          ${tw`bg-indigo-600 shadow`}
-          grid-area: header;
-        `}
+        css={
+          ((theme) => css`
+            ${tw`shadow`}
+            grid-area: header;
+            background: ${theme.colors.bgHeader};
+            color: ${theme.colors.textHeader};
+          `) as ThemedCSS
+        }
       >
         <ul
           css={css`
-            ${tw`flex h-full items-center justify-end space-x-2 text-indigo-300`}
+            ${tw`flex h-full items-center justify-end space-x-2`}
           `}
         >
           <HeaderItem
@@ -139,9 +148,7 @@ let IndexPage: React.FunctionComponent<any> = () => {
               ${tw`flex-1 justify-end`}
             `}
           >
-            {/* {searchActive && ( */}
             <input
-              autoFocus
               placeholder="Search"
               type="search"
               css={css`
@@ -161,7 +168,6 @@ let IndexPage: React.FunctionComponent<any> = () => {
                 }
               `}
             />
-            {/* )} */}
             <button onClick={() => setSearchActive(!searchActive)}>
               <Search></Search>
             </button>
@@ -193,6 +199,11 @@ let IndexPage: React.FunctionComponent<any> = () => {
             </button>
           </HeaderItem>
           <HeaderItem>
+            <button>
+              <Sliders></Sliders>
+            </button>
+          </HeaderItem>
+          <HeaderItem>
             <div
               css={css`
                 ${tw`relative`}
@@ -200,11 +211,11 @@ let IndexPage: React.FunctionComponent<any> = () => {
             >
               <Mail></Mail>
               <Circle
-                width="6"
+                width="8"
                 fill="tomato"
                 css={css`
                   ${tw`absolute top-0 right-0`}
-                  right: -2px;
+                  left: calc(100% - 6px);
                 `}
               ></Circle>
             </div>
@@ -217,22 +228,19 @@ let IndexPage: React.FunctionComponent<any> = () => {
 
       {/* Sidebar */}
       <aside
-        css={[
-          tw`bg-indigo-800 text-indigo-200`,
-          css`
-            grid-area: sidebar;
-          `,
-        ]}
+        css={
+          ((theme) =>
+            css`
+              grid-area: sidebar;
+              background: ${theme.colors.bgSidebar};
+              color: ${theme.colors.textSidebar};
+            `) as ThemedCSS
+        }
       >
         <ul
-          css={[
-            tw`flex flex-col h-full`,
-            css`
-              & ${SidebarItem}:hover {
-                ${tw`text-white cursor-pointer bg-indigo-700`}
-              }
-            `,
-          ]}
+          css={css`
+            ${tw`flex flex-col h-full`}
+          `}
         >
           <SidebarItem onClick={() => setMenuActive(!menuActive)}>
             <Menu></Menu>
@@ -278,12 +286,13 @@ let IndexPage: React.FunctionComponent<any> = () => {
 
       {/* Content */}
       <section
-        css={[
-          css`
-            ${tw`p-4 bg-white`}
+        css={
+          ((theme) => css`
+            ${tw`p-4`}
             grid-area: content;
-          `,
-        ]}
+            background: ${theme.colors.bgContent};
+          `) as ThemedCSS
+        }
       >
         <h1>content</h1>
       </section>
@@ -313,55 +322,62 @@ let Avatar: React.FC<any> = (props) => {
   );
 };
 
-let MenuItem = styled.li<{ active?: boolean }>`
-  ${tw`flex px-6 space-x-4 items-center relative cursor-pointer hover:text-white`}
-  box-sizing: border-box;
-  height: 70px;
-  transition: background-color 0.3s;
-  padding-left: 324px;
-
-  ::after {
-    ${tw`absolute top-0 bottom-0 bg-red-600`}
-    content: '';
-    left: calc(50% - 80px);
-    width: 80px;
-    transform: ${(props) => (props.active ? 'none' : 'translateX(-4px)')};
-    opacity: ${(props) => (props.active ? '1' : '0')};
-    will-change: transform, opacity;
-    transition: transform 0.3s, opacity 0.3s;
-  }
-
-  ${(props) =>
-    props.active &&
-    css`
-      ${tw`bg-indigo-400 bg-opacity-25 text-white`}/* border-left: 4px solid red; */
-    `}
-`;
-
-let SidebarItem = styled.li<{ active?: boolean }>`
+let SidebarItem = styled.li<Themed<{ active?: boolean }>>`
   ${tw`flex items-center justify-center relative`}
+  cursor: pointer;
   box-sizing: border-box;
   width: 80px;
   height: 70px;
   transition: background-color 0.3s;
+  background: ${({ theme, active }) => active && theme.colors.bgSidebarActive};
+  color: ${({ theme, active }) => active && theme.colors.textSidebarActive};
+
+  :hover {
+    background: ${({ theme }) => theme.colors.bgSidebarActive};
+    color: ${({ theme }) => theme.colors.textSidebarActive};
+  }
 
   ::after {
-    ${tw`absolute top-0 left-0 bottom-0 bg-red-600`}
+    ${tw`absolute top-0 left-0 bottom-0 bg-crimson`}
     content: '';
     width: 4px;
     transform: ${(props) => (props.active ? 'none' : 'translateX(-4px)')};
     transition: transform 0.3s;
   }
-
-  ${(props) =>
-    props.active &&
-    css`
-      ${tw`bg-indigo-400 bg-opacity-25 text-white`}/* border-left: 4px solid red; */
-    `}
 `;
 
-let HeaderItem = styled.li`
-  ${tw`flex px-4 items-center justify-center space-x-2 hover:text-white`}
+let MenuItem = styled.li<Themed<{ active?: boolean }>>`
+  ${tw`flex px-6 space-x-4 items-center relative cursor-pointer`}
+  box-sizing: border-box;
+  height: 70px;
+  transition: background-color 0.3s;
+  padding-left: 324px;
+  background: ${({ theme, active }) => active && theme.colors.bgSidebarActive};
+  color: ${({ theme, active }) => active && theme.colors.textSidebarActive};
+
+  :hover {
+    background: ${({ theme }) => theme.colors.bgSidebarActive};
+    color: ${({ theme }) => theme.colors.textSidebarActive};
+  }
+
+  ::after {
+    ${tw`absolute top-0 bottom-0 bg-crimson`}
+    content: '';
+    left: calc(50% - 80px);
+    width: 80px;
+    transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
+    opacity: ${({ active }) => (active ? '1' : '0')};
+    will-change: transform, opacity;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+`;
+
+let HeaderItem = styled.li<Themed>`
+  ${tw`flex px-4 items-center justify-center space-x-2`}
+
+  :hover {
+    color: ${({ theme }) => theme.colors.textHeaderActive};
+  }
 `;
 
 export default IndexPage;

@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors: {
         navy: '#19f',
+        crimson: 'hsl(6, 73%, 48%)',
       },
     },
   },

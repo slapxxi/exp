@@ -1,16 +1,12 @@
-import baseStyled, { CreateStyled } from '@emotion/styled';
+import { defaultTheme } from '@self/lib/styles/theme';
 import { ThemeProvider } from 'emotion-theming';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import '../styles/index.css';
 
-let theme = { colors: { text: 'hotpink' } } as const;
-
-export let styled = baseStyled as CreateStyled<typeof theme>;
-
 let App: AppType = (props) => {
   let { Component, pageProps } = props;
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={defaultTheme}>
       <Component {...pageProps} />
     </ThemeProvider>
   );
