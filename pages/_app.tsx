@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import {
+  Bell,
   ChevronDown,
   Clock,
   Database,
@@ -222,22 +223,24 @@ let App: AppType = (props) => {
           >
             <HeaderItem
               css={css`
-                ${tw`flex-1 justify-end`}
+                ${tw`flex-1 justify-end space-x-4`}
               `}
             >
               <Input
                 placeholder="Search"
                 type="search"
                 css={css`
-                  ${tw`block w-full`}
+                  ${tw`block`}
+                  width: clamp(100px, 100%, 800px);
                   transition: transform 0.3s, color 0.2s;
                   transform: ${searchActive ? 'scaleX(1)' : 'scaleX(0)'};
                   transform-origin: bottom right;
                   transition-property: transform, color;
                   ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
                   ${searchActive && 'transition-delay: 0s, 0.3s;'}
+                  justify-self: center;
 
-                ::placeholder {
+                  ::placeholder {
                     ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
                     transition: color 0.3s;
                     ${searchActive && 'transition-delay: 0.3s;'}
@@ -273,6 +276,9 @@ let App: AppType = (props) => {
                   `}
                 ></ChevronDown>
               </button>
+            </HeaderItem>
+            <HeaderItem>
+              <Bell></Bell>
             </HeaderItem>
             <HeaderItem>
               <div
@@ -374,7 +380,6 @@ let App: AppType = (props) => {
         <section
           css={
             ((theme) => css`
-              ${tw`p-4`}
               grid-area: content;
               background: ${theme.colors.bgContent};
               color: ${theme.colors.textContent};
