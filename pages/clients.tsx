@@ -6,7 +6,8 @@ let ClientsPage: React.FC<any> = () => {
       <Head>
         <title>Clients | Dashboard</title>
       </Head>
-      Clients
+
+      <div>clients</div>
     </div>
   );
 };

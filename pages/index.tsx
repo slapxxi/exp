@@ -6,7 +6,8 @@ let IndexPage: React.FC<any> = () => {
       <Head>
         <title>Profile | Dashboard</title>
       </Head>
-      Clients
+
+      <div>profile</div>
     </div>
   );
 };

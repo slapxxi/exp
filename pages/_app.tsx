@@ -1,5 +1,6 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
+import { Input } from '@self/components/Input';
 import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
@@ -23,23 +24,49 @@ import {
   PieChart,
   Search,
   Settings,
+  Sun,
   Users,
   Volume2,
   X,
 } from 'react-feather';
 import { animated as a, useSpring } from 'react-spring';
 import tw from 'twin.macro';
+import create from 'zustand';
+import shallow from 'zustand/shallow';
 import '../styles/index.css';
 
 const URL = 'https://picsum.photos/200/200';
 
+let useSettingsStore = create((set) => {
+  let status = typeof window === 'undefined' ? 'ssr' : 'client';
+  let dMode = false;
+
+  if (status === 'client') {
+    let darkMode = localStorage.getItem('darkMode');
+    if (darkMode !== null) {
+      dMode = darkMode === 'true' ? true : false;
+    }
+  }
+
+  return {
+    darkMode: dMode,
+    setDarkMode: (value: boolean) => {
+      set({ darkMode: value });
+      localStorage.setItem('darkMode', value.toString());
+    },
+  };
+});
+
 let App: AppType = (props) => {
   let { Component, pageProps } = props;
   let router = useRouter();
-  let [active, setActive] = useState(false);
+  let [mounted, setMounted] = useState(false);
   let [menuActive, setMenuActive] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
-  let [darkMode, setDarkMode] = useState(false);
+  let { darkMode, setDarkMode } = useSettingsStore(
+    ({ darkMode, setDarkMode }) => ({ darkMode, setDarkMode }),
+    shallow,
+  );
 
   let ap = useSpring({
     x: menuActive ? -49 : -100,
@@ -49,20 +76,32 @@ let App: AppType = (props) => {
   });
 
   useEffect(() => {
+    if (mounted) {
+      setTimeout(() => {
+        document.body.classList.add('mounted');
+      }, 100);
+    }
+
+    setMounted(true);
+  }, [mounted]);
+
+  useEffect(() => {
     function handler() {
       setMenuActive(false);
     }
 
     router.events.on('routeChangeComplete', handler);
     return () => router.events.off('routeChangeComplete', handler);
-  });
+  }, []);
 
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : defaultTheme}>
+    // Prevent SSR errors
+    <ThemeProvider theme={mounted && darkMode ? darkTheme : defaultTheme}>
       <div
         css={[
           tw`grid h-full box-border`,
           css`
+            visibility: ${mounted ? 'visible' : 'hidden'};
             max-height: 100vh;
             grid-template-columns: 80px 1fr;
             grid-template-rows: 70px 1fr;
@@ -159,7 +198,7 @@ let App: AppType = (props) => {
                 <Settings></Settings> <span>Settings</span>
               </div>
               <button onClick={() => setDarkMode(!darkMode)}>
-                <Moon></Moon>
+                {darkMode ? <Sun></Sun> : <Moon></Moon>}
               </button>
             </MenuItem>
           </ul>
@@ -186,11 +225,11 @@ let App: AppType = (props) => {
                 ${tw`flex-1 justify-end`}
               `}
             >
-              <input
+              <Input
                 placeholder="Search"
                 type="search"
                 css={css`
-                  ${tw`block w-full p-2 rounded text-black`}
+                  ${tw`block w-full`}
                   transition: transform 0.3s, color 0.2s;
                   transform: ${searchActive ? 'scaleX(1)' : 'scaleX(0)'};
                   transform-origin: bottom right;
@@ -199,9 +238,8 @@ let App: AppType = (props) => {
                   ${searchActive && 'transition-delay: 0s, 0.3s;'}
 
                 ::placeholder {
-                    ${tw`text-gray-500`}
                     ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
-                  transition: color 0.3s;
+                    transition: color 0.3s;
                     ${searchActive && 'transition-delay: 0.3s;'}
                   }
                 `}
@@ -322,8 +360,8 @@ let App: AppType = (props) => {
                 ${tw`mt-auto`}
               `}
             >
-              <button>
-                <Moon onClick={() => setDarkMode(!darkMode)}></Moon>
+              <button onClick={() => setDarkMode(!darkMode)}>
+                {darkMode ? <Sun></Sun> : <Moon></Moon>}
               </button>
             </SidebarItem>
             <SidebarItem>
