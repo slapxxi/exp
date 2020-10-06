@@ -1,6 +1,7 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Input } from '@self/components/Input';
+import { useCurrentTime } from '@self/lib/hooks/useCurrentTime';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
 import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
@@ -77,6 +78,7 @@ let App: AppType = (props) => {
   let ref = useOutsideClick(() => {
     setMenuActive((active) => active && false);
   });
+  let time = useCurrentTime();
 
   let ap = useSpring({
     x: menuActive ? -49 : -100,
@@ -268,7 +270,7 @@ let App: AppType = (props) => {
                   ${tw`text-white`}
                 `}
               >
-                08:00
+                {time}
               </span>
             </HeaderItem>
             <HeaderItem>
