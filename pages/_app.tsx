@@ -1,6 +1,7 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Input } from '@self/components/Input';
+import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
 import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
@@ -73,6 +74,9 @@ let App: AppType = (props) => {
     ({ darkMode, setDarkMode }) => ({ darkMode, setDarkMode }),
     shallow,
   );
+  let ref = useOutsideClick(() => {
+    setMenuActive((active) => active && false);
+  });
 
   let ap = useSpring({
     x: menuActive ? -49 : -100,
@@ -117,6 +121,7 @@ let App: AppType = (props) => {
       >
         {/* Menu */}
         <a.div
+          ref={ref}
           css={
             ((theme) => css`
               ${tw`absolute flex z-20 bottom-0 top-0 select-none`}
