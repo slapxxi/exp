@@ -38,7 +38,12 @@ import '../styles/index.css';
 
 const URL = 'https://picsum.photos/200/200';
 
-let useSettingsStore = create((set) => {
+type State = {
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+};
+
+let useSettingsStore = create<State>((set) => {
   let status = typeof window === 'undefined' ? 'ssr' : 'client';
   let dMode = false;
 
@@ -199,7 +204,7 @@ let App: AppType = (props) => {
                 <Settings></Settings> <span>Settings</span>
               </div>
               <button onClick={() => setDarkMode(!darkMode)}>
-                {darkMode ? <Sun></Sun> : <Moon></Moon>}
+                {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
               </button>
             </MenuItem>
           </ul>
@@ -367,7 +372,7 @@ let App: AppType = (props) => {
               `}
             >
               <button onClick={() => setDarkMode(!darkMode)}>
-                {darkMode ? <Sun></Sun> : <Moon></Moon>}
+                {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
               </button>
             </SidebarItem>
             <SidebarItem>
@@ -415,19 +420,17 @@ let Avatar: React.FC<any> = (props) => {
   return (
     <svg viewBox="0 0 100 100" {...rest}>
       <mask id="mask">
-        <circle cx="50" cy="50" r="50" fill="white"></circle>
+        <circle cx="50" cy="50" r="48" fill="white"></circle>
       </mask>
-      <image href={src} width="100" height="100" mask="url(#mask)" />
       <circle
         cx="50"
         cy="50"
-        r="49"
+        r="50"
         css={(theme) => css`
-          fill: none;
-          stroke: ${theme.colors.textHeader};
-          stroke-width: 2;
+          fill: ${theme.colors.textHeader};
         `}
       ></circle>
+      <image href={src} width="100" height="100" mask="url(#mask)" />
     </svg>
   );
 };
