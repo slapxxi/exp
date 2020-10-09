@@ -11,7 +11,7 @@ let SettingsPage: React.FC = () => {
   return (
     <div
       css={css`
-        ${tw`p-4`}
+        ${tw`p-4 space-y-2`}
       `}
     >
       <div
@@ -20,11 +20,23 @@ let SettingsPage: React.FC = () => {
         `}
       >
         <Checkbox
-          animate
+          animate={!settings.reduceMotion}
           checked={settings.darkMode}
           onClick={() => settings.setDarkMode(!settings.darkMode)}
         ></Checkbox>
         <label htmlFor="#">Dark Mode</label>
+      </div>
+      <div
+        css={css`
+          ${tw`space-x-2`}
+        `}
+      >
+        <Checkbox
+          animate={!settings.reduceMotion}
+          checked={settings.reduceMotion}
+          onClick={() => settings.setReduceMotion(!settings.reduceMotion)}
+        ></Checkbox>
+        <label htmlFor="#">Reduce Motion</label>
       </div>
     </div>
   );

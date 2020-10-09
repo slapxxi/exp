@@ -43,25 +43,36 @@ const URL = 'https://picsum.photos/200/200';
 
 type State = {
   darkMode: boolean;
+  reduceMotion: boolean;
   setDarkMode: (value: boolean) => void;
+  setReduceMotion: (value: boolean) => void;
 };
 
 export let useSettingsStore = create<State>((set) => {
   let status = typeof window === 'undefined' ? 'ssr' : 'client';
-  let dMode = false;
+  let defaultSettings = {
+    darkMode: false,
+    reduceMotion: false,
+  };
 
   if (status === 'client') {
-    let darkMode = localStorage.getItem('darkMode');
-    if (darkMode !== null) {
-      dMode = darkMode === 'true' ? true : false;
+    let localSettings = localStorage.getItem('settings');
+    if (localSettings !== null) {
+      defaultSettings = JSON.parse(localSettings);
     }
   }
 
   return {
-    darkMode: dMode,
-    setDarkMode: (value: boolean) => {
+    ...defaultSettings,
+    setDarkMode: (value) => {
       set({ darkMode: value });
-      localStorage.setItem('darkMode', value.toString());
+      let modifiedSettings = { ...defaultSettings, darkMode: value };
+      localStorage.setItem('settings', JSON.stringify(modifiedSettings));
+    },
+    setReduceMotion: (value) => {
+      set({ reduceMotion: value });
+      let modifiedSettings = { ...defaultSettings, reduceMotion: value };
+      localStorage.setItem('settings', JSON.stringify(modifiedSettings));
     },
   };
 });
@@ -76,6 +87,7 @@ let App: AppType = (props) => {
     ({ darkMode, setDarkMode }) => ({ darkMode, setDarkMode }),
     shallow,
   );
+  let reduceMotion = useSettingsStore((s) => s.reduceMotion);
   let ref = useOutsideClick(() => {
     setMenuActive((active) => active && false);
   });
@@ -83,6 +95,7 @@ let App: AppType = (props) => {
 
   let ap = useSpring({
     x: menuActive ? -49 : -100,
+    immediate: reduceMotion,
     config: {
       friction: 18,
     },
@@ -245,7 +258,7 @@ let App: AppType = (props) => {
                 css={css`
                   ${tw`block`}
                   width: clamp(100px, 100%, 800px);
-                  transition: transform 0.3s, color 0.2s;
+                  transition: ${mounted && reduceMotion ? 'none' : 'transform 0.3s, color 0.2s'};
                   transform: ${searchActive ? 'scaleX(1)' : 'scaleX(0)'};
                   transform-origin: bottom right;
                   transition-property: transform, color;
@@ -255,7 +268,7 @@ let App: AppType = (props) => {
 
                   ::placeholder {
                     ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
-                    transition: color 0.3s;
+                    transition: ${mounted && reduceMotion ? 'none' : 'color 0.3s'};
                     ${searchActive && 'transition-delay: 0.3s;'}
                   }
                 `}
