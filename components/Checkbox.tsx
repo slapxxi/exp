@@ -1,4 +1,4 @@
-import { css, keyframes } from '@emotion/core';
+import { css } from '@emotion/core';
 import { ThemedCSS } from '@self/lib/types';
 import { DetailedHTMLProps, InputHTMLAttributes } from 'react';
 import { animated as a, useSpring } from 'react-spring';
@@ -12,6 +12,10 @@ export let Checkbox: React.FC<Props> = (props) => {
   let { checked, animate, onClick, className, ...rest } = props;
   let ap = useSpring({
     progress: checked ? 0 : 21,
+    size: checked ? 1 : 0,
+    config: {
+      tension: checked ? 170 : 320,
+    },
     immediate: !animate,
   });
 
@@ -49,6 +53,9 @@ export let Checkbox: React.FC<Props> = (props) => {
         y="1.5"
         rx="1"
         ry="1"
+        style={{
+          transform: ap.size.interpolate((v) => `scale(${1 + Math.sin(v * Math.PI) / 4})`),
+        }}
         css={(theme) => css`
           fill: none;
           stroke-linecap: round;
@@ -56,8 +63,6 @@ export let Checkbox: React.FC<Props> = (props) => {
           stroke-width: 1.2;
           stroke: ${theme.colors.bgCheckbox};
           transform-origin: center;
-          animation: ${animate && (checked ? scaleUp : scaleDown)} 0.3s;
-          animation-timing-function: ease-in;
         `}
       ></a.rect>
       <a.polyline
@@ -78,35 +83,3 @@ export let Checkbox: React.FC<Props> = (props) => {
     </svg>
   );
 };
-
-let scaleUp = keyframes`
-0% {
-  transform: scale(1)
-}
-
-30% {
-  transform: scale(1)
-}
-
-40% {
-  transform: scale(1.15)
-}
-
-100% {
-  transform: scale(1)
-}
-`;
-
-let scaleDown = keyframes`
-0% {
-  transform: scale(1)
-}
-
-50% {
-  transform: scale(0.85)
-}
-
-100% {
-  transform: scale(1)
-}
-`;
