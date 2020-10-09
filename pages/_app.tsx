@@ -1,5 +1,6 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
+import { Avatar } from '@self/components/Avatar';
 import { Input } from '@self/components/Input';
 import { useCurrentTime } from '@self/lib/hooks/useCurrentTime';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
@@ -45,7 +46,7 @@ type State = {
   setDarkMode: (value: boolean) => void;
 };
 
-let useSettingsStore = create<State>((set) => {
+export let useSettingsStore = create<State>((set) => {
   let status = typeof window === 'undefined' ? 'ssr' : 'client';
   let dMode = false;
 
@@ -382,8 +383,12 @@ let App: AppType = (props) => {
                 {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
               </button>
             </SidebarItem>
-            <SidebarItem>
-              <Settings></Settings>
+            <SidebarItem active={router.pathname === '/settings'}>
+              <Link href="/settings" as="/settings">
+                <SidebarLink>
+                  <Settings></Settings>
+                </SidebarLink>
+              </Link>
             </SidebarItem>
           </ul>
         </aside>
@@ -398,7 +403,7 @@ let App: AppType = (props) => {
             `) as ThemedCSS
           }
         >
-          <Component {...pageProps} />
+          {mounted && <Component {...pageProps} />}
         </section>
       </div>
     </ThemeProvider>
@@ -417,27 +422,6 @@ let Circle: React.FC<any> = (props) => {
   return (
     <svg viewBox="0 0 10 10" {...props}>
       <circle cx="5" cy="5" r="5"></circle>
-    </svg>
-  );
-};
-
-let Avatar: React.FC<any> = (props) => {
-  let { src, ...rest } = props;
-
-  return (
-    <svg viewBox="0 0 100 100" {...rest}>
-      <mask id="mask">
-        <circle cx="50" cy="50" r="48" fill="white"></circle>
-      </mask>
-      <circle
-        cx="50"
-        cy="50"
-        r="50"
-        css={(theme) => css`
-          fill: ${theme.colors.textHeader};
-        `}
-      ></circle>
-      <image href={src} width="100" height="100" mask="url(#mask)" />
     </svg>
   );
 };
