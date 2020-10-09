@@ -89,7 +89,7 @@ let App: AppType = (props) => {
   );
   let reduceMotion = useSettingsStore((s) => s.reduceMotion);
   let ref = useOutsideClick(() => {
-    setMenuActive((active) => active && false);
+    setMenuActive(false);
   });
   let time = useCurrentTime();
 
@@ -112,7 +112,7 @@ let App: AppType = (props) => {
   }, [mounted]);
 
   useEffect(() => {
-    function handler() {
+    function handler(url: string) {
       setMenuActive(false);
     }
 
@@ -206,24 +206,17 @@ let App: AppType = (props) => {
               <Lock></Lock> <span>Security</span>
             </MenuItem>
             <MenuItem
-              css={[
-                css`
-                  ${tw`justify-between hover:bg-transparent`}
-                  margin-top: auto;
-
-                  :hover {
-                    color: inherit;
-                  }
-                `,
-              ]}
+              active={router.pathname === '/settings'}
+              css={css`
+                ${tw`justify-between`}
+                margin-top: auto;
+              `}
             >
-              <div
-                css={css`
-                  ${tw`flex space-x-4`}
-                `}
-              >
-                <Settings></Settings> <span>Settings</span>
-              </div>
+              <Link href="/settings" as="/settings">
+                <MenuLink>
+                  <Settings></Settings> <span>Settings</span>
+                </MenuLink>
+              </Link>
               <button onClick={() => setDarkMode(!darkMode)}>
                 {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
               </button>
@@ -235,7 +228,7 @@ let App: AppType = (props) => {
         <header
           css={
             ((theme) => css`
-              ${tw`shadow z-10`}
+              ${tw`flex shadow z-10`}
               grid-area: header;
               background: ${theme.colors.bgHeader};
               color: ${theme.colors.textHeader};
@@ -244,7 +237,7 @@ let App: AppType = (props) => {
         >
           <ul
             css={css`
-              ${tw`flex h-full items-center justify-end space-x-2`}
+              ${tw`flex px-4 flex-1 justify-end`}
             `}
           >
             <HeaderItem
@@ -257,6 +250,7 @@ let App: AppType = (props) => {
                 type="search"
                 css={css`
                   ${tw`block`}
+                  flex: 1 10px;
                   width: clamp(100px, 100%, 800px);
                   transition: ${mounted && reduceMotion ? 'none' : 'transform 0.3s, color 0.2s'};
                   transform: ${searchActive ? 'scaleX(1)' : 'scaleX(0)'};
@@ -287,8 +281,19 @@ let App: AppType = (props) => {
                 {time}
               </span>
             </HeaderItem>
-            <HeaderItem>
-              <Avatar src={URL} width={46} height={46}></Avatar>
+            <HeaderItem
+              css={css`
+                align-items: stretch;
+              `}
+            >
+              <Avatar
+                src={URL}
+                width={46}
+                height={46}
+                css={css`
+                  align-self: center;
+                `}
+              ></Avatar>
               <button
                 css={css`
                   ${tw`flex items-center space-x-2`}
@@ -492,7 +497,7 @@ let MenuItem = styled.li<Themed<{ active?: boolean }>>`
 `;
 
 let HeaderItem = styled.li<Themed>`
-  ${tw`flex px-4 items-center justify-center space-x-2`}
+  ${tw`flex items-center justify-center space-x-2 px-4`}
 
   :hover {
     color: ${({ theme }) => theme.colors.textHeaderActive};
