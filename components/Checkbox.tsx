@@ -19,9 +19,12 @@ export let Checkbox: React.FC<Props> = (props) => {
     <svg
       viewBox="0 0 10 10"
       onClick={onClick}
-      style={{ overflow: 'visible' }}
       css={css`
+        display: inline-block;
+        overflow: visible;
         width: 20px;
+        transform: translateY(-2px);
+        margin-right: 0.25rem;
       `}
       className={className}
     >
@@ -58,7 +61,7 @@ export let Checkbox: React.FC<Props> = (props) => {
         `}
       ></a.rect>
       <a.polyline
-        points="1 3 4.5 6.5 9.5 0.5"
+        points="1.5 4 4 6.5 9 1.5"
         strokeDashoffset={ap.progress}
         css={
           ((theme) => css`
@@ -68,7 +71,7 @@ export let Checkbox: React.FC<Props> = (props) => {
             stroke-dasharray: 20;
             stroke-linejoin: round;
             stroke-linecap: round;
-            stroke-width: ${theme.type === 'light' ? 1.8 : 1.3};
+            stroke-width: ${theme.type === 'light' ? 1.6 : 1.3};
           `) as ThemedCSS
         }
       ></a.polyline>
@@ -81,7 +84,11 @@ let scaleUp = keyframes`
   transform: scale(1)
 }
 
-50% {
+30% {
+  transform: scale(1)
+}
+
+40% {
   transform: scale(1.15)
 }
 
@@ -95,7 +102,7 @@ let scaleDown = keyframes`
   transform: scale(1)
 }
 
-60% {
+50% {
   transform: scale(0.85)
 }
 
