@@ -443,8 +443,9 @@ let App: AppType = (props) => {
                 }}
                 key={key}
                 css={(theme) => css`
-                  overflow: auto;
+                  overflow-y: auto;
                   background: ${theme.colors.bgContent};
+                  color: ${theme.colors.textContent};
                   grid-column: 2 / span 2;
                   grid-row: 2 / span 2;
                   will-change: transform, opacity;
