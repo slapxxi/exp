@@ -1,17 +1,18 @@
 import { css } from '@emotion/core';
 import { Checkbox } from '@self/components/Checkbox';
-import React from 'react';
+import React, { useState } from 'react';
 import tw from 'twin.macro';
 import shallow from 'zustand/shallow';
 import { useSettingsStore } from './_app';
 
 let SettingsPage: React.FC = () => {
   let settings = useSettingsStore((settings) => settings, shallow);
+  let [active, setActive] = useState();
 
   return (
     <div
       css={css`
-        ${tw`p-4 space-y-2`}
+        ${tw`p-4 space-y-2 select-none`}
       `}
     >
       <div
@@ -37,6 +38,18 @@ let SettingsPage: React.FC = () => {
           onClick={() => settings.setReduceMotion(!settings.reduceMotion)}
         ></Checkbox>
         <label htmlFor="#">Reduce Motion</label>
+      </div>
+      <div
+        css={css`
+          ${tw`space-x-2`}
+        `}
+      >
+        <Checkbox
+          animate={!settings.reduceMotion}
+          checked={active}
+          onClick={() => setActive(!active)}
+        ></Checkbox>
+        <label htmlFor="#">Just for Testing</label>
       </div>
     </div>
   );

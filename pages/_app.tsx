@@ -33,6 +33,7 @@ import {
   Volume2,
   X,
 } from 'react-feather';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { animated as a, useSpring } from 'react-spring';
 import tw from 'twin.macro';
 import create from 'zustand';
@@ -40,6 +41,8 @@ import shallow from 'zustand/shallow';
 import '../styles/index.css';
 
 const URL = 'https://picsum.photos/200/200';
+
+const cache = new QueryCache();
 
 type State = {
   darkMode: boolean;
@@ -122,309 +125,311 @@ let App: AppType = (props) => {
 
   return (
     // Prevent SSR errors
-    <ThemeProvider theme={mounted && darkMode ? darkTheme : defaultTheme}>
-      <div
-        css={[
-          tw`grid h-full box-border`,
-          css`
-            visibility: ${mounted ? 'visible' : 'hidden'};
-            max-height: 100vh;
-            grid-template-columns: 80px 1fr;
-            grid-template-rows: 70px 1fr;
-            grid-template-areas: 'sidebar header' 'sidebar content';
-          `,
-        ]}
-      >
-        {/* Menu */}
-        <a.div
-          ref={ref}
-          css={
-            ((theme) => css`
-              ${tw`absolute flex z-20 bottom-0 top-0 select-none`}
-              width: 600px;
-              will-change: transform;
-              box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
-              background: ${theme.colors.bgSidebar};
-              color: ${theme.colors.textSidebar};
-            `) as ThemedCSS
-          }
-          style={{ transform: ap.x.interpolate((v) => `translateX(${v}%)`) }}
+    <ReactQueryCacheProvider queryCache={cache}>
+      <ThemeProvider theme={mounted && darkMode ? darkTheme : defaultTheme}>
+        <div
+          css={[
+            tw`grid h-full box-border`,
+            css`
+              visibility: ${mounted ? 'visible' : 'hidden'};
+              max-height: 100vh;
+              grid-template-columns: 80px 1fr;
+              grid-template-rows: 70px 1fr;
+              grid-template-areas: 'sidebar header' 'sidebar content';
+            `,
+          ]}
         >
-          <ul
-            css={css`
-              ${tw`flex flex-col h-full w-full`}
-            `}
-          >
-            <MenuItem
-              onClick={() => setMenuActive(!menuActive)}
-              css={(theme) => css`
-                ${tw`relative justify-end`}
-
-                ::before {
-                  ${tw`absolute left-0 right-0 bottom-0`}
-                  content: '';
-                  height: 2px;
-                  background: ${theme.colors.bgSidebarActive};
-                }
-              `}
-            >
-              <X></X>
-            </MenuItem>
-            <MenuItem active={router.pathname === '/'}>
-              <Link href="/" as="/">
-                <MenuLink>
-                  <PieChart></PieChart> <span>Profile</span>
-                </MenuLink>
-              </Link>
-            </MenuItem>
-            <MenuItem active={router.pathname === '/clients'}>
-              <Link href="/clients" as="/clients">
-                <MenuLink>
-                  <Users></Users> <span>Clients</span>
-                </MenuLink>
-              </Link>
-            </MenuItem>
-            <MenuItem>
-              <Database></Database> <span>Realty</span>
-            </MenuItem>
-            <MenuItem>
-              <Home></Home> <span>Second Market</span>
-            </MenuItem>
-            <MenuItem>
-              <List></List> <span>Tasks</span>
-            </MenuItem>
-            <MenuItem>
-              <Folder></Folder> <span>Documents</span>
-            </MenuItem>
-            <MenuItem>
-              <Volume2></Volume2> <span>Marketing</span>
-            </MenuItem>
-            <MenuItem>
-              <Info></Info> <span>Information</span>
-            </MenuItem>
-            <MenuItem>
-              <Lock></Lock> <span>Security</span>
-            </MenuItem>
-            <MenuItem
-              active={router.pathname === '/settings'}
-              css={css`
-                ${tw`justify-between`}
-                margin-top: auto;
-              `}
-            >
-              <Link href="/settings" as="/settings">
-                <MenuLink>
-                  <Settings></Settings> <span>Settings</span>
-                </MenuLink>
-              </Link>
-              <button onClick={() => setDarkMode(!darkMode)}>
-                {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
-              </button>
-            </MenuItem>
-          </ul>
-        </a.div>
-
-        {/* Header */}
-        <header
-          css={
-            ((theme) => css`
-              ${tw`flex shadow z-10`}
-              grid-area: header;
-              background: ${theme.colors.bgHeader};
-              color: ${theme.colors.textHeader};
-            `) as ThemedCSS
-          }
-        >
-          <ul
-            css={css`
-              ${tw`flex px-4 flex-1 justify-end`}
-            `}
-          >
-            <HeaderItem
-              css={css`
-                ${tw`flex-1 justify-end space-x-4`}
-              `}
-            >
-              <Input
-                placeholder="Search"
-                type="search"
-                css={css`
-                  ${tw`block`}
-                  flex: 1 10px;
-                  width: clamp(100px, 100%, 800px);
-                  transition: ${mounted && reduceMotion ? 'none' : 'transform 0.3s, color 0.2s'};
-                  transform: ${searchActive ? 'scaleX(1)' : 'scaleX(0)'};
-                  transform-origin: bottom right;
-                  transition-property: transform, color;
-                  ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
-                  ${searchActive && 'transition-delay: 0s, 0.3s;'}
-                  justify-self: center;
-
-                  ::placeholder {
-                    ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
-                    transition: ${mounted && reduceMotion ? 'none' : 'color 0.3s'};
-                    ${searchActive && 'transition-delay: 0.3s;'}
-                  }
-                `}
-              />
-              <button onClick={() => setSearchActive(!searchActive)}>
-                <Search></Search>
-              </button>
-            </HeaderItem>
-            <HeaderItem>
-              <Clock></Clock>{' '}
-              <span
-                css={css`
-                  ${tw`text-white`}
-                `}
-              >
-                {time}
-              </span>
-            </HeaderItem>
-            <HeaderItem
-              css={css`
-                align-items: stretch;
-              `}
-            >
-              <Avatar
-                src={URL}
-                width={46}
-                height={46}
-                css={css`
-                  align-self: center;
-                `}
-              ></Avatar>
-              <button
-                css={css`
-                  ${tw`flex items-center space-x-2`}
-                `}
-              >
-                <span>Salamatin Dmitry</span>
-                <ChevronDown
-                  size="18"
-                  css={css`
-                    margin-top: 1px;
-                  `}
-                ></ChevronDown>
-              </button>
-            </HeaderItem>
-            <HeaderItem>
-              <Bell></Bell>
-            </HeaderItem>
-            <HeaderItem>
-              <div
-                css={css`
-                  ${tw`relative`}
-                `}
-              >
-                <Mail></Mail>
-                <Circle
-                  width="8"
-                  fill="tomato"
-                  css={css`
-                    ${tw`absolute top-0 right-0`}
-                    left: calc(100% - 6px);
-                  `}
-                ></Circle>
-              </div>
-            </HeaderItem>
-            <HeaderItem>
-              <LogOut></LogOut>
-            </HeaderItem>
-          </ul>
-        </header>
-
-        {/* Sidebar */}
-        <aside
-          css={
-            ((theme) =>
-              css`
-                ${tw`z-10`}
-                grid-area: sidebar;
+          {/* Menu */}
+          <a.div
+            ref={ref}
+            css={
+              ((theme) => css`
+                ${tw`absolute flex z-20 bottom-0 top-0 select-none`}
+                width: 600px;
+                will-change: transform;
+                box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
                 background: ${theme.colors.bgSidebar};
                 color: ${theme.colors.textSidebar};
-                transform: translateX(0%);
-                transition: transform 0.3s;
-                will-change: transform;
               `) as ThemedCSS
-          }
-        >
-          <ul
-            css={css`
-              ${tw`flex flex-col h-full`}
-            `}
+            }
+            style={{ transform: ap.x.interpolate((v) => `translateX(${v}%)`) }}
           >
-            <SidebarItem onClick={() => setMenuActive(!menuActive)}>
-              <Menu size={28}></Menu>
-            </SidebarItem>
-            <SidebarItem active={router.pathname === '/'}>
-              <Link href="/" as="/">
-                <SidebarLink>
-                  <PieChart></PieChart>
-                </SidebarLink>
-              </Link>
-            </SidebarItem>
-            <SidebarItem active={router.pathname === '/clients'}>
-              <Link href="/clients" as="/clients">
-                <SidebarLink>
-                  <Users></Users>
-                </SidebarLink>
-              </Link>
-            </SidebarItem>
-            <SidebarItem>
-              <Database></Database>
-            </SidebarItem>
-            <SidebarItem>
-              <Home></Home>
-            </SidebarItem>
-            <SidebarItem>
-              <List></List>
-            </SidebarItem>
-            <SidebarItem>
-              <Folder></Folder>
-            </SidebarItem>
-            <SidebarItem>
-              <Volume2></Volume2>
-            </SidebarItem>
-            <SidebarItem>
-              <Info></Info>
-            </SidebarItem>
-            <SidebarItem>
-              <Lock></Lock>
-            </SidebarItem>
-            <SidebarItem
+            <ul
               css={css`
-                ${tw`mt-auto`}
+                ${tw`flex flex-col h-full w-full`}
               `}
             >
-              <button onClick={() => setDarkMode(!darkMode)}>
-                {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
-              </button>
-            </SidebarItem>
-            <SidebarItem active={router.pathname === '/settings'}>
-              <Link href="/settings" as="/settings">
-                <SidebarLink>
-                  <Settings></Settings>
-                </SidebarLink>
-              </Link>
-            </SidebarItem>
-          </ul>
-        </aside>
+              <MenuItem
+                onClick={() => setMenuActive(!menuActive)}
+                css={(theme) => css`
+                  ${tw`relative justify-end`}
 
-        {/* Content */}
-        <section
-          css={
-            ((theme) => css`
-              grid-area: content;
-              background: ${theme.colors.bgContent};
-              color: ${theme.colors.textContent};
-            `) as ThemedCSS
-          }
-        >
-          {mounted && <Component {...pageProps} />}
-        </section>
-      </div>
-    </ThemeProvider>
+                  ::before {
+                    ${tw`absolute left-0 right-0 bottom-0`}
+                    content: '';
+                    height: 2px;
+                    background: ${theme.colors.bgSidebarActive};
+                  }
+                `}
+              >
+                <X></X>
+              </MenuItem>
+              <MenuItem active={router.pathname === '/'}>
+                <Link href="/" as="/">
+                  <MenuLink>
+                    <PieChart></PieChart> <span>Profile</span>
+                  </MenuLink>
+                </Link>
+              </MenuItem>
+              <MenuItem active={router.pathname === '/clients'}>
+                <Link href="/clients" as="/clients">
+                  <MenuLink>
+                    <Users></Users> <span>Clients</span>
+                  </MenuLink>
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Database></Database> <span>Realty</span>
+              </MenuItem>
+              <MenuItem>
+                <Home></Home> <span>Second Market</span>
+              </MenuItem>
+              <MenuItem>
+                <List></List> <span>Tasks</span>
+              </MenuItem>
+              <MenuItem>
+                <Folder></Folder> <span>Documents</span>
+              </MenuItem>
+              <MenuItem>
+                <Volume2></Volume2> <span>Marketing</span>
+              </MenuItem>
+              <MenuItem>
+                <Info></Info> <span>Information</span>
+              </MenuItem>
+              <MenuItem>
+                <Lock></Lock> <span>Security</span>
+              </MenuItem>
+              <MenuItem
+                active={router.pathname === '/settings'}
+                css={css`
+                  ${tw`justify-between`}
+                  margin-top: auto;
+                `}
+              >
+                <Link href="/settings" as="/settings">
+                  <MenuLink>
+                    <Settings></Settings> <span>Settings</span>
+                  </MenuLink>
+                </Link>
+                <button onClick={() => setDarkMode(!darkMode)}>
+                  {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
+                </button>
+              </MenuItem>
+            </ul>
+          </a.div>
+
+          {/* Header */}
+          <header
+            css={
+              ((theme) => css`
+                ${tw`flex shadow z-10`}
+                grid-area: header;
+                background: ${theme.colors.bgHeader};
+                color: ${theme.colors.textHeader};
+              `) as ThemedCSS
+            }
+          >
+            <ul
+              css={css`
+                ${tw`flex flex-1 justify-end`}
+              `}
+            >
+              <HeaderItem
+                css={css`
+                  ${tw`flex-1 justify-end space-x-4`}
+                `}
+              >
+                <Input
+                  placeholder="Search"
+                  type="search"
+                  css={css`
+                    ${tw`block`}
+                    flex: 1 10px;
+                    width: clamp(100px, 100%, 800px);
+                    transition: ${mounted && reduceMotion ? 'none' : 'transform 0.3s, color 0.2s'};
+                    transform: ${searchActive ? 'scaleX(1)' : 'scaleX(0)'};
+                    transform-origin: bottom right;
+                    transition-property: transform, color;
+                    ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
+                    ${searchActive && 'transition-delay: 0s, 0.3s;'}
+                  justify-self: center;
+
+                    ::placeholder {
+                      ${searchActive ? tw`text-opacity-100` : tw`text-opacity-0`}
+                      transition: ${mounted && reduceMotion ? 'none' : 'color 0.3s'};
+                      ${searchActive && 'transition-delay: 0.3s;'}
+                    }
+                  `}
+                />
+                <button onClick={() => setSearchActive(!searchActive)}>
+                  <Search></Search>
+                </button>
+              </HeaderItem>
+              <HeaderItem>
+                <Clock></Clock>{' '}
+                <span
+                  css={css`
+                    ${tw`text-white`}
+                  `}
+                >
+                  {time}
+                </span>
+              </HeaderItem>
+              <HeaderItem
+                css={css`
+                  align-items: stretch;
+                `}
+              >
+                <Avatar
+                  src={URL}
+                  width={46}
+                  height={46}
+                  css={css`
+                    align-self: center;
+                  `}
+                ></Avatar>
+                <button
+                  css={css`
+                    ${tw`flex items-center space-x-2`}
+                  `}
+                >
+                  <span>Salamatin Dmitry</span>
+                  <ChevronDown
+                    size="18"
+                    css={css`
+                      margin-top: 1px;
+                    `}
+                  ></ChevronDown>
+                </button>
+              </HeaderItem>
+              <HeaderItem>
+                <Bell></Bell>
+              </HeaderItem>
+              <HeaderItem>
+                <div
+                  css={css`
+                    ${tw`relative`}
+                  `}
+                >
+                  <Mail></Mail>
+                  <Circle
+                    width="8"
+                    fill="tomato"
+                    css={css`
+                      ${tw`absolute top-0 right-0`}
+                      left: calc(100% - 6px);
+                    `}
+                  ></Circle>
+                </div>
+              </HeaderItem>
+              <HeaderItem>
+                <LogOut></LogOut>
+              </HeaderItem>
+            </ul>
+          </header>
+
+          {/* Sidebar */}
+          <aside
+            css={
+              ((theme) =>
+                css`
+                  ${tw`z-10`}
+                  grid-area: sidebar;
+                  background: ${theme.colors.bgSidebar};
+                  color: ${theme.colors.textSidebar};
+                  transform: translateX(0%);
+                  transition: transform 0.3s;
+                  will-change: transform;
+                `) as ThemedCSS
+            }
+          >
+            <ul
+              css={css`
+                ${tw`flex flex-col h-full`}
+              `}
+            >
+              <SidebarItem onClick={() => setMenuActive(!menuActive)}>
+                <Menu size={28}></Menu>
+              </SidebarItem>
+              <SidebarItem active={router.pathname === '/'}>
+                <Link href="/" as="/">
+                  <SidebarLink>
+                    <PieChart></PieChart>
+                  </SidebarLink>
+                </Link>
+              </SidebarItem>
+              <SidebarItem active={router.pathname === '/clients'}>
+                <Link href="/clients" as="/clients">
+                  <SidebarLink>
+                    <Users></Users>
+                  </SidebarLink>
+                </Link>
+              </SidebarItem>
+              <SidebarItem>
+                <Database></Database>
+              </SidebarItem>
+              <SidebarItem>
+                <Home></Home>
+              </SidebarItem>
+              <SidebarItem>
+                <List></List>
+              </SidebarItem>
+              <SidebarItem>
+                <Folder></Folder>
+              </SidebarItem>
+              <SidebarItem>
+                <Volume2></Volume2>
+              </SidebarItem>
+              <SidebarItem>
+                <Info></Info>
+              </SidebarItem>
+              <SidebarItem>
+                <Lock></Lock>
+              </SidebarItem>
+              <SidebarItem
+                css={css`
+                  ${tw`mt-auto`}
+                `}
+              >
+                <button onClick={() => setDarkMode(!darkMode)}>
+                  {mounted && darkMode ? <Sun></Sun> : <Moon></Moon>}
+                </button>
+              </SidebarItem>
+              <SidebarItem active={router.pathname === '/settings'}>
+                <Link href="/settings" as="/settings">
+                  <SidebarLink>
+                    <Settings></Settings>
+                  </SidebarLink>
+                </Link>
+              </SidebarItem>
+            </ul>
+          </aside>
+
+          {/* Content */}
+          <section
+            css={
+              ((theme) => css`
+                grid-area: content;
+                background: ${theme.colors.bgContent};
+                color: ${theme.colors.textContent};
+              `) as ThemedCSS
+            }
+          >
+            {mounted && <Component {...pageProps} />}
+          </section>
+        </div>
+      </ThemeProvider>
+    </ReactQueryCacheProvider>
   );
 };
 

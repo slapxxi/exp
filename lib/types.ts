@@ -31,14 +31,10 @@ export interface UserComment {
   dislikes: number;
 }
 
-export type Theme = {
-  colors: {
-    bgSidebar: string;
-  };
-};
+export type Theme = typeof defaultTheme;
 
-export type Themed<Props = {}> = Props & { theme: typeof defaultTheme };
+export type Themed<Props = {}> = Props & { theme: Theme };
 
-export type ThemedCSS = InterpolationWithTheme<typeof defaultTheme>;
+export type ThemedCSS = InterpolationWithTheme<Theme>;
 
 export type PhoneType = 'scam' | 'ads' | 'pranks';
