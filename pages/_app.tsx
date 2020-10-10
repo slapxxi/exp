@@ -93,14 +93,12 @@ let App: AppType = (props) => {
     setMenuActive(false);
   });
   let time = useCurrentTime();
+  // @ts-ignore
   let transitions = useTransition([{ id: router.route, Component, pageProps }], (item) => item.id, {
-    from: { y: 100, opacity: 0 },
-    leave: { y: -100, opacity: 0 },
+    from: { y: 65, opacity: 0 },
+    leave: { y: -65, opacity: 0 },
     enter: { y: 0, opacity: 1 },
     immediate: reduceMotion,
-    config: {
-      friction: 14,
-    },
   });
 
   let ap = useSpring({
@@ -438,7 +436,7 @@ let App: AppType = (props) => {
                 <a.div
                   style={{
                     opacity: props.opacity,
-                    transform: props.y.interpolate((v) => `translate3d(0, ${v}px, 0)`),
+                    transform: props.y.interpolate((v) => `translate3d(0, ${v}%, 0)`),
                   }}
                   key={key}
                   css={css`
