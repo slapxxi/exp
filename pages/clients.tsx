@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { Fragment, SVGProps } from 'react';
-import { Check, Grid, Search, X } from 'react-feather';
+import { Grid, PhoneCall, PhoneMissed, PhoneOff, Search } from 'react-feather';
 import { useQuery } from 'react-query';
 import tw from 'twin.macro';
 
@@ -140,8 +140,9 @@ let ClientsPage: NextPage<Props> = (props) => {
                         vertical-align: middle;
                       `}
                     >
-                      {item.status === 'completed' && <SuccessIcon as={Check}></SuccessIcon>}
-                      {item.status === 'no-response' && <ErrorIcon as={X}></ErrorIcon>}
+                      {item.status === 'completed' && <SuccessIcon as={PhoneCall}></SuccessIcon>}
+                      {item.status === 'no-response' && <ErrorIcon as={PhoneMissed}></ErrorIcon>}
+                      {item.status === 'busy' && <ErrorIcon as={PhoneOff}></ErrorIcon>}
                     </Cell>
                     <Cell>{item.phoneNumber}</Cell>
                     <Cell>{format(new Date(item.callDate), 'dd.MM.yyyy hh:mm:ss')}</Cell>
@@ -199,11 +200,13 @@ let StackIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
 let SuccessIcon = styled.div<Themed>`
   ${tw`inline-block`}
   color: ${({ theme }) => theme.colors.success};
+  stroke-width: 1;
 `;
 
 let ErrorIcon = styled.div<Themed>`
   ${tw`inline-block`}
   color: ${({ theme }) => theme.colors.error};
+  stroke-width: 1;
 `;
 
 let Row = styled.tr<Themed>`

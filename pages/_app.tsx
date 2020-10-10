@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css, Global } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Avatar } from '@self/components/Avatar';
 import { Input } from '@self/components/Input';
@@ -134,16 +134,23 @@ let App: AppType = (props) => {
       <ThemeProvider theme={mounted && darkMode ? darkTheme : defaultTheme}>
         <div
           css={[
-            tw`grid h-full box-border`,
+            tw`grid h-full box-border overflow-hidden`,
             css`
               visibility: ${mounted ? 'visible' : 'hidden'};
               max-height: 100vh;
               grid-template-columns: 80px 1fr;
               grid-template-rows: 70px 1fr;
-              grid-template-areas: 'sidebar header' 'sidebar content';
+              /* grid-template-areas: 'sidebar header' 'sidebar content'; */
             `,
           ]}
         >
+          <Global
+            styles={(theme) => css`
+              body {
+                background: ${theme.colors.bgContent};
+              }
+            `}
+          />
           {/* Menu */}
           <a.div
             ref={ref}
@@ -237,8 +244,12 @@ let App: AppType = (props) => {
           <header
             css={
               ((theme) => css`
-                ${tw`flex shadow z-10`}
+                ${tw`fixed right-0 flex z-10`}
+                left: 70px;
+                height: 70px;
                 grid-area: header;
+                grid-column: 2;
+                grid-row: 1;
                 background: ${theme.colors.bgHeader};
                 color: ${theme.colors.textHeader};
               `) as ThemedCSS
@@ -348,8 +359,10 @@ let App: AppType = (props) => {
             css={
               ((theme) =>
                 css`
-                  ${tw`z-10`}
+                  ${tw`fixed bottom-0 top-0 z-10`}
                   grid-area: sidebar;
+                  grid-column: 1;
+                  grid-row: 1/3;
                   background: ${theme.colors.bgSidebar};
                   color: ${theme.colors.textSidebar};
                   transform: translateX(0%);
@@ -421,33 +434,25 @@ let App: AppType = (props) => {
           </aside>
 
           {/* Content */}
-          <section
-            css={
-              ((theme) => css`
-                ${tw`relative overflow-hidden`}
-                grid-area: content;
-                background: ${theme.colors.bgContent};
-                color: ${theme.colors.textContent};
-              `) as ThemedCSS
-            }
-          >
-            {mounted &&
-              transitions.map(({ item, key, props }) => (
-                <a.div
-                  style={{
-                    opacity: props.opacity,
-                    transform: props.y.interpolate((v) => `translate3d(0, ${v}%, 0)`),
-                  }}
-                  key={key}
-                  css={css`
-                    ${tw`absolute top-0 right-0 bottom-0 left-0`}
-                    will-change: transform, opacity;
-                  `}
-                >
-                  <item.Component {...item.pageProps}></item.Component>
-                </a.div>
-              ))}
-          </section>
+          {mounted &&
+            transitions.map(({ item, key, props }) => (
+              <a.section
+                style={{
+                  opacity: props.opacity,
+                  transform: props.y.interpolate((v) => `translate3d(0, ${v}%, 0)`),
+                }}
+                key={key}
+                css={(theme) => css`
+                  overflow: auto;
+                  background: ${theme.colors.bgContent};
+                  grid-column: 2 / span 2;
+                  grid-row: 2 / span 2;
+                  will-change: transform, opacity;
+                `}
+              >
+                <item.Component {...item.pageProps}></item.Component>
+              </a.section>
+            ))}
         </div>
       </ThemeProvider>
     </ReactQueryCacheProvider>
