@@ -1,11 +1,12 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { getOrders } from '@self/lib/services/getOrders';
-import { Themed } from '@self/lib/types';
+import { Themed, ThemedCSS } from '@self/lib/types';
 import { format } from 'date-fns';
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import Head from 'next/head';
-import { Check, X } from 'react-feather';
+import React, { Fragment, SVGProps } from 'react';
+import { Check, Grid, Search, X } from 'react-feather';
 import { useQuery } from 'react-query';
 import tw from 'twin.macro';
 
@@ -16,7 +17,6 @@ interface Props {
 let ClientsPage: NextPage<Props> = (props) => {
   let { initialData } = props;
   let { status, data } = useQuery('ordersData', getOrders, { initialData: initialData });
-  console.log(status, data);
 
   return (
     <>
@@ -29,6 +29,83 @@ let ClientsPage: NextPage<Props> = (props) => {
           ${tw`p-4`}
         `}
       >
+        <div
+          css={
+            ((theme) => css`
+              ${tw`flex rounded shadow my-4`}
+              min-height: 48px;
+              background: ${theme.colors.bgItem};
+              color: ${theme.colors.textItem};
+
+              > * {
+                border-right: 1px solid ${theme.colors.bgContent};
+
+                &:last-child {
+                  border: 0;
+                }
+              }
+            `) as ThemedCSS
+          }
+        >
+          <ToolbarItem>
+            <label
+              htmlFor="search-orders"
+              css={css`
+                align-self: center;
+              `}
+            >
+              Search
+            </label>
+          </ToolbarItem>
+          <ToolbarItem
+            noPadding
+            css={css`
+              ${tw`flex-1`}
+            `}
+          >
+            <input
+              id="search-orders"
+              type="search"
+              placeholder="Search..."
+              css={
+                ((theme) => css`
+                  ${tw`flex-1 px-4`}
+                  background: ${theme.colors.bgItem};
+                  color: ${theme.colors.textItem};
+
+                  ::placeholder {
+                    color: ${theme.colors.textContent};
+                  }
+                `) as ThemedCSS
+              }
+            ></input>
+          </ToolbarItem>
+          <ToolbarItem noPadding>
+            <button
+              css={css`
+                ${tw`px-4`}
+              `}
+            >
+              <Search strokeWidth="1.5"></Search>
+            </button>
+          </ToolbarItem>
+          <ToolbarItem noPadding>
+            <button
+              css={css`
+                ${tw`px-4 pr-2`}
+              `}
+            >
+              <StackIcon strokeWidth="1.5"></StackIcon>
+            </button>
+            <button
+              css={css`
+                ${tw`px-4 pl-2`}
+              `}
+            >
+              <Grid strokeWidth="1.5"></Grid>
+            </button>
+          </ToolbarItem>
+        </div>
         <table
           css={(theme) =>
             css`
@@ -54,8 +131,8 @@ let ClientsPage: NextPage<Props> = (props) => {
           <tbody>
             {status === 'success' &&
               data.map((item, i) => (
-                <>
-                  <Row key={item.id}>
+                <Fragment key={item.id}>
+                  <Row>
                     <Cell
                       title={item.status}
                       css={css`
@@ -63,23 +140,24 @@ let ClientsPage: NextPage<Props> = (props) => {
                         vertical-align: middle;
                       `}
                     >
-                      {item.status === 'completed' && <Icon as={Check} success></Icon>}
-                      {item.status === 'no-response' && <Icon as={X}></Icon>}
+                      {item.status === 'completed' && <SuccessIcon as={Check}></SuccessIcon>}
+                      {item.status === 'no-response' && <ErrorIcon as={X}></ErrorIcon>}
                     </Cell>
                     <Cell>{item.phoneNumber}</Cell>
                     <Cell>{format(new Date(item.callDate), 'dd.MM.yyyy hh:mm:ss')}</Cell>
                     <Cell>{item.curator}</Cell>
                     <Cell>{item.duration ? ~~(item.duration / 60) : 'N/A'}</Cell>
                     <Cell>
-                      <Play></Play>
+                      <PlayIcon></PlayIcon>
                     </Cell>
                     <Cell>
                       {item.status === 'completed' && <Button>Add</Button>}
                       {item.status === 'no-response' && <Button>Call Back</Button>}
+                      {item.status === 'busy' && <Button>Call Back</Button>}
                     </Cell>
                   </Row>
                   <Spacer key={i}></Spacer>
-                </>
+                </Fragment>
               ))}
           </tbody>
         </table>
@@ -88,9 +166,14 @@ let ClientsPage: NextPage<Props> = (props) => {
   );
 };
 
-let Play: React.FC = () => {
+let ToolbarItem = styled.div<{ noPadding?: boolean }>`
+  ${tw`flex`}
+  ${({ noPadding }) => !noPadding && tw`px-4 space-x-2`}
+`;
+
+let PlayIcon: React.FC = () => {
   return (
-    <svg viewBox="0 0 10 10" width="30">
+    <svg viewBox="0 0 10 10" width="24">
       <circle cx="5" cy="5" r="4" fill="none" stroke="currentColor" strokeWidth=".5"></circle>
       <polyline
         points="0 0 0 10 8 5 0 0"
@@ -104,9 +187,23 @@ let Play: React.FC = () => {
   );
 };
 
-let Icon = styled.div<Themed<{ success?: boolean }>>`
+let StackIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
+  return (
+    <svg viewBox="0 0 24 24" width="24" strokeWidth="2" {...props}>
+      <rect width="18.5" x="2.5" height="6" y="4" stroke="currentColor" fill="none"></rect>
+      <rect width="18.5" x="2.5" height="6" y="15" stroke="currentColor" fill="none"></rect>
+    </svg>
+  );
+};
+
+let SuccessIcon = styled.div<Themed>`
   ${tw`inline-block`}
-  color: ${({ success, theme }) => (success ? theme.colors.success : theme.colors.error)};
+  color: ${({ theme }) => theme.colors.success};
+`;
+
+let ErrorIcon = styled.div<Themed>`
+  ${tw`inline-block`}
+  color: ${({ theme }) => theme.colors.error};
 `;
 
 let Row = styled.tr<Themed>`

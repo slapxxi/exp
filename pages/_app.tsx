@@ -9,7 +9,6 @@ import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import {
   Bell,
@@ -34,7 +33,7 @@ import {
   X,
 } from 'react-feather';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
-import { animated as a, useSpring } from 'react-spring';
+import { animated as a, useSpring, useTransition } from 'react-spring';
 import tw from 'twin.macro';
 import create from 'zustand';
 import shallow from 'zustand/shallow';
@@ -81,8 +80,7 @@ export let useSettingsStore = create<State>((set) => {
 });
 
 let App: AppType = (props) => {
-  let { Component, pageProps } = props;
-  let router = useRouter();
+  let { Component, pageProps, router } = props;
   let [mounted, setMounted] = useState(false);
   let [menuActive, setMenuActive] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
@@ -95,6 +93,15 @@ let App: AppType = (props) => {
     setMenuActive(false);
   });
   let time = useCurrentTime();
+  let transitions = useTransition([{ id: router.route, Component, pageProps }], (item) => item.id, {
+    from: { y: 100, opacity: 0 },
+    leave: { y: -100, opacity: 0 },
+    enter: { y: 0, opacity: 1 },
+    immediate: reduceMotion,
+    config: {
+      friction: 14,
+    },
+  });
 
   let ap = useSpring({
     x: menuActive ? -49 : -100,
@@ -419,13 +426,29 @@ let App: AppType = (props) => {
           <section
             css={
               ((theme) => css`
+                ${tw`relative overflow-hidden`}
                 grid-area: content;
                 background: ${theme.colors.bgContent};
                 color: ${theme.colors.textContent};
               `) as ThemedCSS
             }
           >
-            {mounted && <Component {...pageProps} />}
+            {mounted &&
+              transitions.map(({ item, key, props }) => (
+                <a.div
+                  style={{
+                    opacity: props.opacity,
+                    transform: props.y.interpolate((v) => `translate3d(0, ${v}px, 0)`),
+                  }}
+                  key={key}
+                  css={css`
+                    ${tw`absolute top-0 right-0 bottom-0 left-0`}
+                    will-change: transform, opacity;
+                  `}
+                >
+                  <item.Component {...item.pageProps}></item.Component>
+                </a.div>
+              ))}
           </section>
         </div>
       </ThemeProvider>

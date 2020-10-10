@@ -22,6 +22,15 @@ let orders: NextApiHandler = (req, res) => {
         duration: null,
         recording: null,
       },
+      {
+        id: 3,
+        callDate: new Date(),
+        phoneNumber: '89284564200',
+        curator: 'Salamatov',
+        status: 'busy',
+        duration: null,
+        recording: null,
+      },
     ],
   });
 };
