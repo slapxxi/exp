@@ -7,9 +7,9 @@ type State = {
   setReduceMotion: (value: boolean) => void;
 };
 
-export let useSettingsStore = create<State>((set) => {
+export let useSettingsStore = create<State>((set, get) => {
   let status = typeof window === 'undefined' ? 'ssr' : 'client';
-  let defaultSettings = {
+  let settings = {
     darkMode: false,
     reduceMotion: false,
   };
@@ -17,21 +17,21 @@ export let useSettingsStore = create<State>((set) => {
   if (status === 'client') {
     let localSettings = localStorage.getItem('settings');
     if (localSettings !== null) {
-      defaultSettings = JSON.parse(localSettings);
+      settings = JSON.parse(localSettings);
     }
   }
 
   return {
-    ...defaultSettings,
+    ...settings,
     setDarkMode: (value) => {
       set({ darkMode: value });
-      let modifiedSettings = { ...defaultSettings, darkMode: value };
-      localStorage.setItem('settings', JSON.stringify(modifiedSettings));
+      settings = { ...settings, darkMode: value };
+      localStorage.setItem('settings', JSON.stringify(settings));
     },
     setReduceMotion: (value) => {
       set({ reduceMotion: value });
-      let modifiedSettings = { ...defaultSettings, reduceMotion: value };
-      localStorage.setItem('settings', JSON.stringify(modifiedSettings));
+      settings = { ...settings, reduceMotion: value };
+      localStorage.setItem('settings', JSON.stringify(settings));
     },
   };
 });
