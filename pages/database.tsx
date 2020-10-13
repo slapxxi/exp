@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useState } from 'react';
 import tw from 'twin.macro';
 
-let IndexPage: React.FC = () => {
+let DatabasePage: React.FC = () => {
   let [active, setActive] = useState(false);
 
   return (
@@ -26,16 +26,16 @@ let IndexPage: React.FC = () => {
           `}
         >
           <defs>
-            <linearGradient id="grad">
+            <linearGradient id="database-grad">
               <stop stopColor="tomato" offset="0"></stop>
-              <stop stopColor="purple" offset="100%"></stop>
+              <stop stopColor="orange" offset="100%"></stop>
             </linearGradient>
           </defs>
-          <circle cx={50} cy={50} r={40} fill="url(#grad)"></circle>
+          <rect width={50} height={50} x="25" y="25" rx="4" fill="url(#database-grad)"></rect>
         </svg>
       </div>
     </>
   );
 };
 
-export default IndexPage;
+export default DatabasePage;

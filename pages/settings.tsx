@@ -1,13 +1,13 @@
 import { css } from '@emotion/core';
 import { Checkbox } from '@self/components/Checkbox';
+import { useSettingsStore } from '@self/lib/hooks/useSettingsStore';
 import React, { useState } from 'react';
 import tw from 'twin.macro';
 import shallow from 'zustand/shallow';
-import { useSettingsStore } from './_app';
 
 let SettingsPage: React.FC = () => {
   let settings = useSettingsStore((settings) => settings, shallow);
-  let [active, setActive] = useState();
+  let [active, setActive] = useState(false);
 
   return (
     <div
@@ -21,11 +21,12 @@ let SettingsPage: React.FC = () => {
         `}
       >
         <Checkbox
+          id="dark-mode"
           animate={!settings.reduceMotion}
           checked={settings.darkMode}
-          onClick={() => settings.setDarkMode(!settings.darkMode)}
+          onChange={() => settings.setDarkMode(!settings.darkMode)}
         ></Checkbox>
-        <label htmlFor="#">Dark Mode</label>
+        <label htmlFor="dark-mode">Dark Mode</label>
       </div>
       <div
         css={css`
@@ -33,11 +34,12 @@ let SettingsPage: React.FC = () => {
         `}
       >
         <Checkbox
+          id="reduce-motion"
           animate={!settings.reduceMotion}
           checked={settings.reduceMotion}
-          onClick={() => settings.setReduceMotion(!settings.reduceMotion)}
+          onChange={() => settings.setReduceMotion(!settings.reduceMotion)}
         ></Checkbox>
-        <label htmlFor="#">Reduce Motion</label>
+        <label htmlFor="reduce-motion">Reduce Motion</label>
       </div>
       <div
         css={css`
@@ -45,11 +47,12 @@ let SettingsPage: React.FC = () => {
         `}
       >
         <Checkbox
+          id="testing"
           animate={!settings.reduceMotion}
           checked={active}
-          onClick={() => setActive(!active)}
+          onChange={() => setActive(!active)}
         ></Checkbox>
-        <label htmlFor="#">Just for Testing</label>
+        <label htmlFor="testing">Just for Testing</label>
       </div>
     </div>
   );

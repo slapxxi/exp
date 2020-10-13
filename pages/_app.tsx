@@ -4,6 +4,7 @@ import { Avatar } from '@self/components/Avatar';
 import { Input } from '@self/components/Input';
 import { useCurrentTime } from '@self/lib/hooks/useCurrentTime';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
+import { useSettingsStore } from '@self/lib/hooks/useSettingsStore';
 import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
@@ -35,49 +36,12 @@ import {
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { animated as a, useSpring, useTransition } from 'react-spring';
 import tw from 'twin.macro';
-import create from 'zustand';
 import shallow from 'zustand/shallow';
 import '../styles/index.css';
 
 const URL = 'https://picsum.photos/200/200';
 
 const cache = new QueryCache();
-
-type State = {
-  darkMode: boolean;
-  reduceMotion: boolean;
-  setDarkMode: (value: boolean) => void;
-  setReduceMotion: (value: boolean) => void;
-};
-
-export let useSettingsStore = create<State>((set) => {
-  let status = typeof window === 'undefined' ? 'ssr' : 'client';
-  let defaultSettings = {
-    darkMode: false,
-    reduceMotion: false,
-  };
-
-  if (status === 'client') {
-    let localSettings = localStorage.getItem('settings');
-    if (localSettings !== null) {
-      defaultSettings = JSON.parse(localSettings);
-    }
-  }
-
-  return {
-    ...defaultSettings,
-    setDarkMode: (value) => {
-      set({ darkMode: value });
-      let modifiedSettings = { ...defaultSettings, darkMode: value };
-      localStorage.setItem('settings', JSON.stringify(modifiedSettings));
-    },
-    setReduceMotion: (value) => {
-      set({ reduceMotion: value });
-      let modifiedSettings = { ...defaultSettings, reduceMotion: value };
-      localStorage.setItem('settings', JSON.stringify(modifiedSettings));
-    },
-  };
-});
 
 let App: AppType = (props) => {
   let { Component, pageProps, router } = props;
@@ -147,7 +111,7 @@ let App: AppType = (props) => {
           <Global
             styles={(theme) => css`
               body {
-                background: ${theme.colors.bgContent};
+                background: ${theme.colors.bgSidebar};
               }
             `}
           />
@@ -156,7 +120,7 @@ let App: AppType = (props) => {
             ref={ref}
             css={
               ((theme) => css`
-                ${tw`absolute flex z-20 bottom-0 top-0 select-none`}
+                ${tw`absolute flex z-30 bottom-0 top-0 select-none`}
                 width: 600px;
                 will-change: transform;
                 box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
@@ -200,8 +164,12 @@ let App: AppType = (props) => {
                   </MenuLink>
                 </Link>
               </MenuItem>
-              <MenuItem>
-                <Database></Database> <span>Realty</span>
+              <MenuItem active={router.pathname === '/database'}>
+                <Link href="/database" as="/database">
+                  <MenuLink>
+                    <Database></Database> <span>Realty</span>
+                  </MenuLink>
+                </Link>
               </MenuItem>
               <MenuItem>
                 <Home></Home> <span>Second Market</span>
@@ -244,7 +212,7 @@ let App: AppType = (props) => {
           <header
             css={
               ((theme) => css`
-                ${tw`fixed right-0 flex z-10`}
+                ${tw`fixed right-0 flex z-20`}
                 left: 70px;
                 height: 70px;
                 grid-area: header;
@@ -359,7 +327,7 @@ let App: AppType = (props) => {
             css={
               ((theme) =>
                 css`
-                  ${tw`fixed bottom-0 top-0 z-10`}
+                  ${tw`fixed bottom-0 top-0 z-20`}
                   grid-area: sidebar;
                   grid-column: 1;
                   grid-row: 1/3;
@@ -393,8 +361,12 @@ let App: AppType = (props) => {
                   </SidebarLink>
                 </Link>
               </SidebarItem>
-              <SidebarItem>
-                <Database></Database>
+              <SidebarItem active={router.pathname === '/database'}>
+                <Link href="/database" as="/database">
+                  <SidebarLink>
+                    <Database></Database>
+                  </SidebarLink>
+                </Link>
               </SidebarItem>
               <SidebarItem>
                 <Home></Home>
@@ -433,6 +405,15 @@ let App: AppType = (props) => {
             </ul>
           </aside>
 
+          <div
+            css={(theme) => css`
+              ${tw`z-0`}
+              background: ${theme.colors.bgContent};
+              grid-column: 2 / span 2;
+              grid-row: 2 / span 2;
+            `}
+          ></div>
+
           {/* Content */}
           {mounted &&
             transitions.map(({ item, key, props }) => (
@@ -443,8 +424,8 @@ let App: AppType = (props) => {
                 }}
                 key={key}
                 css={(theme) => css`
+                  ${tw`z-10`}
                   overflow-y: auto;
-                  background: ${theme.colors.bgContent};
                   color: ${theme.colors.textContent};
                   grid-column: 2 / span 2;
                   grid-row: 2 / span 2;
@@ -506,7 +487,7 @@ let MenuItem = styled.li<Themed<{ active?: boolean }>>`
   box-sizing: border-box;
   height: 70px;
   transition: background-color 0.3s;
-  padding-left: 324px;
+  padding-left: 322px;
   background: ${({ theme, active }) => active && theme.colors.bgSidebarActive};
   color: ${({ theme, active }) => active && theme.colors.textSidebarActive};
 
@@ -518,12 +499,13 @@ let MenuItem = styled.li<Themed<{ active?: boolean }>>`
   ::after {
     ${tw`absolute top-0 bottom-0`}
     content: '';
-    left: calc(50% - 80px);
-    width: 80px;
+    left: 0;
+    right: 50%;
+    right: calc(50% + 2px);
     transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
     opacity: ${({ active }) => (active ? '1' : '0')};
     background: ${({ theme }) => theme.colors.accent};
-    will-change: transform, opacity;
+    /* will-change: transform, opacity; */
     transition: transform 0.3s, opacity 0.3s;
   }
 `;
