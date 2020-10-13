@@ -1,5 +1,7 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
+import { Avatar } from '@self/components/Avatar';
+import { Checkbox } from '@self/components/Checkbox';
 import { Tab, TabPanel, Tabs } from '@self/components/Tabs';
 import { getOrders } from '@self/lib/services/getOrders';
 import { Themed, ThemedCSS } from '@self/lib/types';
@@ -7,9 +9,11 @@ import { format } from 'date-fns';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { Fragment, SVGProps, useState } from 'react';
-import { Grid, PhoneCall, PhoneMissed, PhoneOff, Search } from 'react-feather';
+import { Grid, Paperclip, PhoneCall, PhoneMissed, PhoneOff, Search } from 'react-feather';
 import { useQuery } from 'react-query';
 import tw from 'twin.macro';
+
+const URL = 'https://picsum.photos/200/200';
 
 interface Props {
   initialData: any;
@@ -17,7 +21,8 @@ interface Props {
 
 let ClientsPage: NextPage<Props> = (props) => {
   let { initialData } = props;
-  let [activeTab, setActiveTab] = useState(1);
+  let [activeTab, setActiveTab] = useState(0);
+  let [active, setActive] = useState(false);
   let { status, data } = useQuery('ordersData', getOrders, { initialData: initialData });
 
   return (
@@ -32,7 +37,6 @@ let ClientsPage: NextPage<Props> = (props) => {
           <Tab label="Property"></Tab>
           <Tab label="Clients"></Tab>
           <Tab label="Deals"></Tab>
-          <Tab label="Deals"></Tab>
         </Tabs>
 
         <div
@@ -40,6 +44,127 @@ let ClientsPage: NextPage<Props> = (props) => {
             ${tw`p-4`}
           `}
         >
+          <TabPanel value={activeTab} index={1}>
+            <ul>
+              <ListRow
+                css={(theme) => css`
+                  > * {
+                    border-right: 1px solid ${theme.colors.bgContent};
+
+                    &:last-child {
+                      border: 0;
+                    }
+                  }
+                `}
+              >
+                <ListItem
+                  center
+                  as="label"
+                  htmlFor="wut"
+                  css={(theme) => css`
+                    ${tw`p-6 rounded-tl rounded-bl`}
+
+                    :hover {
+                      background: ${theme.colors.bgCheckbox};
+                    }
+                  `}
+                >
+                  <Checkbox
+                    id="wut"
+                    animate
+                    checked={active}
+                    onChange={() => setActive(!active)}
+                  ></Checkbox>
+                </ListItem>
+                <ListItem
+                  col
+                  center
+                  css={css`
+                    ${tw`p-6`}
+                  `}
+                >
+                  <Avatar src={URL} width={50}></Avatar>
+                  <div>ID 12345</div>
+                </ListItem>
+                <ListItem grow col>
+                  <ListItem
+                    css={(theme) => css`
+                      border-bottom: 1px solid ${theme.colors.bgContent};
+                    `}
+                  >
+                    <ListItem grow pad={1}>
+                      <span>Ivanov Alexandr</span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Amount</Title>
+                      <span>from 3 000 000</span>
+                    </ListItem>
+                    <ListItem col pad={1}>
+                      <Title>Created</Title>
+                      <span>28.03.20</span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Wants</Title>
+                      <span>Sell</span>
+                    </ListItem>
+                    <ListItem center col pad={1}>
+                      <Title>Met</Title>
+                      <span>28.10.2020</span>
+                    </ListItem>
+                    <ListItem col pad={1}>
+                      <Title>Status</Title>
+                      <span>Ready</span>
+                    </ListItem>
+                  </ListItem>
+                  <ListItem>
+                    <ListItem col grow pad={1}>
+                      <span>8 931 300 20 20</span>
+                      <span>New York</span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Size</Title>
+                      <span>
+                        from 30.0m<sup>2</sup>
+                      </span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Updated</Title>
+                      <span>28.07.20</span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Type</Title>
+                      <span>House</span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Payment</Title>
+                      <span>Unknown</span>
+                    </ListItem>
+                    <ListItem col center pad={1}>
+                      <Title>Reminders</Title>
+                      <span>None</span>
+                    </ListItem>
+                  </ListItem>
+                </ListItem>
+                <ListItem
+                  center
+                  css={css`
+                    ${tw`p-4`}
+                  `}
+                >
+                  Salamatin Dmitriy
+                </ListItem>
+                <ListItem
+                  center
+                  css={css`
+                    ${tw`p-4`}
+                  `}
+                >
+                  <Paperclip></Paperclip>
+                </ListItem>
+              </ListRow>
+            </ul>
+          </TabPanel>
+
           <TabPanel value={activeTab} index={0}>
             <div
               css={
@@ -187,6 +312,28 @@ let ClientsPage: NextPage<Props> = (props) => {
     </>
   );
 };
+
+let Title = styled.span<Themed>`
+  color: ${(props) => props.theme.colors.textItemTitle};
+`;
+
+let ListRow = styled.div<Themed>`
+  ${tw`flex rounded shadow-xl`}
+  background: ${({ theme }) => theme.colors.bgItem};
+  color: ${({ theme }) => theme.colors.textItem};
+`;
+
+let ListItem = styled.div<{ pad?: number; col?: boolean; grow?: boolean; center?: boolean }>`
+  ${tw`flex`}
+  ${({ col }) => col && tw`flex-col`}
+  ${({ center }) => center && tw`items-center justify-center`}
+  ${({ grow }) => grow && tw`flex-1`}
+  padding: ${({ pad }) => pad && `${pad}rem`};
+
+  :hover {
+    /* ${tw`bg-red-300`} */
+  }
+`;
 
 let ToolbarItem = styled.div<{ noPadding?: boolean }>`
   ${tw`flex`}

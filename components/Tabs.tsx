@@ -1,9 +1,7 @@
 import { css } from '@emotion/core';
 import { ThemedCSS } from '@self/lib/types';
-import { Children, cloneElement, createContext, isValidElement } from 'react';
+import { Children, cloneElement, isValidElement } from 'react';
 import tw from 'twin.macro';
-
-let tabsContext = createContext<{ activeTab: string }>({ activeTab: null });
 
 interface TabsProps {
   value: number;
