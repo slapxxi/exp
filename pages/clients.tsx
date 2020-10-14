@@ -52,9 +52,8 @@ let ClientsPage: NextPage<Props> = (props) => {
                 css={(theme) => css`
                   ${tw`grid rounded shadow-xl`}
                   background: ${theme.colors.bgItem};
-                  grid-template-columns: repeat(2, auto) minmax(10%, 1.5fr) repeat(5, 1fr) 1.25fr auto;
-                  grid-template-rows: repeat(2, minmax(70px, 1fr));
-                  grid-auto-rows: 0px;
+                  grid-template-columns: repeat(2, auto) minmax(auto, 1.5fr) 1fr 1.25fr auto;
+                  grid-template-rows: repeat(10, minmax(70px, auto));
                   color: ${theme.colors.textItem};
 
                   > * {
@@ -64,12 +63,22 @@ let ClientsPage: NextPage<Props> = (props) => {
                       border: 0;
                     }
                   }
+
+                  @media (min-width: 768px) {
+                    grid-template-columns: repeat(2, auto) minmax(auto, 1.5fr) repeat(2, 1fr) 1.25fr auto;
+                    grid-template-rows: repeat(5, minmax(70px, auto));
+                  }
+
+                  @media (min-width: 1024px) {
+                    grid-template-columns: repeat(2, auto) minmax(auto, 1.5fr) repeat(5, 1fr) 1.25fr auto;
+                    grid-template-rows: repeat(2, minmax(70px, auto));
+                  }
                 `}
               >
                 <label
                   css={(theme) => css`
                     ${tw`flex p-4 flex-col justify-center rounded`}
-                    grid-row: span 2;
+                    grid-row: span 10;
 
                     :hover {
                       background: ${theme.colors.bgItemActive};
@@ -81,7 +90,7 @@ let ClientsPage: NextPage<Props> = (props) => {
                 <div
                   css={css`
                     ${tw`flex flex-col p-4 justify-center items-center`}
-                    grid-row: span 2;
+                    grid-row: span 10;
                   `}
                 >
                   <Avatar src={URL} width={50}></Avatar>
@@ -90,6 +99,16 @@ let ClientsPage: NextPage<Props> = (props) => {
                 <div
                   css={css`
                     ${tw`flex p-4 flex-col justify-center`}
+                    grid-column: 3;
+                    grid-row: span 5;
+
+                    @media (min-width: 768px) {
+                      grid-row: span 2;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-row: 1;
+                    }
                   `}
                 >
                   Slava Pavlutin
@@ -97,14 +116,27 @@ let ClientsPage: NextPage<Props> = (props) => {
                 <div
                   css={css`
                     ${tw`flex p-4 flex-col justify-center`}
-                    grid-row: 2;
                     grid-column: 3;
+                    grid-row: span 5;
+
+                    @media (min-width: 768px) {
+                      grid-row: span 3;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-row: 2;
+                    }
                   `}
                 >
                   <span>8 931 300 88 99</span>
                   <DataLink>New York</DataLink>
                 </div>
-                <DataCell>
+                <DataCell
+                  css={css`
+                    grid-column: 4;
+                    grid-row: 1;
+                  `}
+                >
                   <Title>Amount</Title>
                   <span>from 3 000 000</span>
                 </DataCell>
@@ -112,6 +144,16 @@ let ClientsPage: NextPage<Props> = (props) => {
                   css={css`
                     grid-column: 4;
                     grid-row: 2;
+
+                    @media (min-width: 768px) {
+                      grid-column: 5;
+                      grid-row: 1;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 4;
+                      grid-row: 2;
+                    }
                   `}
                 >
                   <Title>Size</Title>
@@ -119,53 +161,144 @@ let ClientsPage: NextPage<Props> = (props) => {
                     from 30m<sup>2</sup>
                   </span>
                 </DataCell>
-                <DataCell>
+                <DataCell
+                  css={css`
+                    grid-column: 4;
+                    grid-row: 3;
+
+                    @media (min-width: 768px) {
+                      grid-row: 2;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 5;
+                      grid-row: 1;
+                    }
+                  `}
+                >
                   <Title>Created</Title>
                   <span>28.03.20</span>
                 </DataCell>
                 <DataCell
                   css={css`
-                    grid-row: 2;
-                    grid-column: 5;
+                    grid-column: 4;
+                    grid-row: 4;
+
+                    @media (min-width: 768px) {
+                      grid-column: 5;
+                      grid-row: 2;
+                    }
                   `}
                 >
                   <Title>Updated</Title>
                   <span>28.03.20</span>
                 </DataCell>
-                <DataCell>
+                <DataCell
+                  css={css`
+                    grid-column: 4;
+                    grid-row: 5;
+
+                    @media (min-width: 768px) {
+                      grid-row: 3;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 6;
+                      grid-row: 1;
+                    }
+                  `}
+                >
                   <Title>Wants</Title>
                   <span>Sell</span>
                 </DataCell>
                 <DataCell
                   css={css`
-                    grid-row: 2;
-                    grid-column: 6;
+                    grid-column: 4;
+                    grid-row: 6;
+
+                    @media (min-width: 768px) {
+                      grid-column: 5;
+                      grid-row: 3;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 6;
+                      grid-row: 2;
+                    }
                   `}
                 >
                   <Title>Type</Title>
                   <span>House</span>
                 </DataCell>
-                <DataCell>
+                <DataCell
+                  css={css`
+                    grid-column: 4;
+                    grid-row: 7;
+
+                    @media (min-width: 768px) {
+                      grid-row: 4;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 7;
+                      grid-row: 1;
+                    }
+                  `}
+                >
                   <Title>Met</Title>
                   <span>28.10.2020</span>
                 </DataCell>
                 <DataCell
                   css={css`
-                    grid-row: 2;
-                    grid-column: 7;
+                    grid-column: 4;
+                    grid-row: 8;
+
+                    @media (min-width: 768px) {
+                      grid-column: 5;
+                      grid-row: 4;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 7;
+                      grid-row: 2;
+                    }
                   `}
                 >
                   <Title>Payment</Title>
                   <span>Unknown</span>
                 </DataCell>
-                <DataCell>
+                <DataCell
+                  css={css`
+                    grid-column: 4;
+                    grid-row: 9;
+
+                    @media (min-width: 768px) {
+                      grid-row: 5;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 8;
+                      grid-row: 1;
+                    }
+                  `}
+                >
                   <Title>Status</Title>
                   <span>Ready</span>
                 </DataCell>
                 <DataCell
                   css={css`
-                    grid-row: 2;
-                    grid-column: 8;
+                    grid-column: 4;
+                    grid-row: 10;
+
+                    @media (min-width: 768px) {
+                      grid-column: 5;
+                      grid-row: 5;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 8;
+                      grid-row: 2;
+                    }
                   `}
                 >
                   <Title>Reminders</Title>
@@ -174,7 +307,18 @@ let ClientsPage: NextPage<Props> = (props) => {
                 <DataCell
                   css={css`
                     ${tw`p-4`}
-                    grid-row: span 2;
+                    grid-column: 5;
+                    grid-row: 1/11;
+
+                    @media (min-width: 768px) {
+                      grid-column: 6;
+                      grid-row: 1/6;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 9;
+                      grid-row: 1 / span 2;
+                    }
                   `}
                 >
                   Salamatin Andrey
@@ -182,7 +326,18 @@ let ClientsPage: NextPage<Props> = (props) => {
                 <DataCell
                   css={css`
                     ${tw`p-4`}
-                    grid-row: span 2;
+                    grid-column: 6;
+                    grid-row: 1/11;
+
+                    @media (min-width: 768px) {
+                      grid-column: 7;
+                      grid-row: 1/6;
+                    }
+
+                    @media (min-width: 1024px) {
+                      grid-column: 10;
+                      grid-row: 1 / span 2;
+                    }
                   `}
                 >
                   <Paperclip></Paperclip>
