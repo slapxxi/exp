@@ -28,7 +28,7 @@ export let Tabs: React.FC<TabsProps> = (props) => {
             ${tw`absolute bottom-0`}
             content:  '';
             height: 3px;
-            background: ${theme.colors.accent};
+            background: ${theme.gradients.accent};
             width: ${decoratorWidth}%;
             transform: translate3d(${decoratorOffset}%, 0, 0);
             transition: transform 0.3s;
@@ -79,6 +79,10 @@ export let Tab: React.FC<TabProps> = (props) => {
       css={(theme) => css`
         ${tw`flex flex-1 items-center justify-center px-4 cursor-pointer`}
         color: ${active ? theme.colors.accent : theme.colors.textItem};
+
+        :hover {
+          background: ${theme.colors.bgItemActive};
+        }
       `}
       onClick={onClick}
     >

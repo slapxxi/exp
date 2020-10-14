@@ -3,13 +3,14 @@ import styled from '@emotion/styled';
 import { Avatar } from '@self/components/Avatar';
 import { Checkbox } from '@self/components/Checkbox';
 import { Tab, TabPanel, Tabs } from '@self/components/Tabs';
+import { Toolbar } from '@self/components/Toolbar';
 import { getOrders } from '@self/lib/services/getOrders';
-import { Themed, ThemedCSS } from '@self/lib/types';
+import { Themed } from '@self/lib/types';
 import { format } from 'date-fns';
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import React, { Fragment, SVGProps, useState } from 'react';
-import { Grid, Paperclip, PhoneCall, PhoneMissed, PhoneOff, Search } from 'react-feather';
+import React, { Fragment, useState } from 'react';
+import { Paperclip, PhoneCall, PhoneMissed, PhoneOff } from 'react-feather';
 import { useQuery } from 'react-query';
 import tw from 'twin.macro';
 
@@ -45,11 +46,19 @@ let ClientsPage: NextPage<Props> = (props) => {
           `}
         >
           <TabPanel value={activeTab} index={1}>
+            <Toolbar></Toolbar>
             <ul>
-              <ListRow
+              <li
                 css={(theme) => css`
+                  ${tw`grid rounded shadow-xl`}
+                  background: ${theme.colors.bgItem};
+                  grid-template-columns: repeat(2, auto) minmax(10%, 1.5fr) repeat(5, 1fr) 1.25fr auto;
+                  grid-template-rows: repeat(2, minmax(70px, 1fr));
+                  grid-auto-rows: 0px;
+                  color: ${theme.colors.textItem};
+
                   > * {
-                    border-right: 1px solid ${theme.colors.bgContent};
+                    border-right: 1px solid ${theme.colors.bgItemActive};
 
                     &:last-child {
                       border: 0;
@@ -57,192 +66,133 @@ let ClientsPage: NextPage<Props> = (props) => {
                   }
                 `}
               >
-                <ListItem
-                  center
-                  as="label"
-                  htmlFor="wut"
+                <label
                   css={(theme) => css`
-                    ${tw`p-6 rounded-tl rounded-bl`}
+                    ${tw`flex p-4 flex-col justify-center rounded`}
+                    grid-row: span 2;
 
                     :hover {
-                      background: ${theme.colors.bgCheckbox};
+                      background: ${theme.colors.bgItemActive};
                     }
                   `}
                 >
-                  <Checkbox
-                    id="wut"
-                    animate
-                    checked={active}
-                    onChange={() => setActive(!active)}
-                  ></Checkbox>
-                </ListItem>
-                <ListItem
-                  col
-                  center
+                  <Checkbox animate checked={active} onChange={() => setActive(!active)}></Checkbox>
+                </label>
+                <div
                   css={css`
-                    ${tw`p-6`}
+                    ${tw`flex flex-col p-4 justify-center items-center`}
+                    grid-row: span 2;
                   `}
                 >
                   <Avatar src={URL} width={50}></Avatar>
-                  <div>ID 12345</div>
-                </ListItem>
-                <ListItem grow col>
-                  <ListItem
-                    css={(theme) => css`
-                      border-bottom: 1px solid ${theme.colors.bgContent};
-                    `}
-                  >
-                    <ListItem grow pad={1}>
-                      <span>Ivanov Alexandr</span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Amount</Title>
-                      <span>from 3 000 000</span>
-                    </ListItem>
-                    <ListItem col pad={1}>
-                      <Title>Created</Title>
-                      <span>28.03.20</span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Wants</Title>
-                      <span>Sell</span>
-                    </ListItem>
-                    <ListItem center col pad={1}>
-                      <Title>Met</Title>
-                      <span>28.10.2020</span>
-                    </ListItem>
-                    <ListItem col pad={1}>
-                      <Title>Status</Title>
-                      <span>Ready</span>
-                    </ListItem>
-                  </ListItem>
-                  <ListItem>
-                    <ListItem col grow pad={1}>
-                      <span>8 931 300 20 20</span>
-                      <span>New York</span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Size</Title>
-                      <span>
-                        from 30.0m<sup>2</sup>
-                      </span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Updated</Title>
-                      <span>28.07.20</span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Type</Title>
-                      <span>House</span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Payment</Title>
-                      <span>Unknown</span>
-                    </ListItem>
-                    <ListItem col center pad={1}>
-                      <Title>Reminders</Title>
-                      <span>None</span>
-                    </ListItem>
-                  </ListItem>
-                </ListItem>
-                <ListItem
-                  center
+                  <span>ID 12345</span>
+                </div>
+                <div
                   css={css`
-                    ${tw`p-4`}
+                    ${tw`flex p-4 flex-col justify-center`}
                   `}
                 >
-                  Salamatin Dmitriy
-                </ListItem>
-                <ListItem
-                  center
+                  Slava Pavlutin
+                </div>
+                <div
+                  css={css`
+                    ${tw`flex p-4 flex-col justify-center`}
+                    grid-row: 2;
+                    grid-column: 3;
+                  `}
+                >
+                  <span>8 931 300 88 99</span>
+                  <DataLink>New York</DataLink>
+                </div>
+                <DataCell>
+                  <Title>Amount</Title>
+                  <span>from 3 000 000</span>
+                </DataCell>
+                <DataCell
+                  css={css`
+                    grid-column: 4;
+                    grid-row: 2;
+                  `}
+                >
+                  <Title>Size</Title>
+                  <span>
+                    from 30m<sup>2</sup>
+                  </span>
+                </DataCell>
+                <DataCell>
+                  <Title>Created</Title>
+                  <span>28.03.20</span>
+                </DataCell>
+                <DataCell
+                  css={css`
+                    grid-row: 2;
+                    grid-column: 5;
+                  `}
+                >
+                  <Title>Updated</Title>
+                  <span>28.03.20</span>
+                </DataCell>
+                <DataCell>
+                  <Title>Wants</Title>
+                  <span>Sell</span>
+                </DataCell>
+                <DataCell
+                  css={css`
+                    grid-row: 2;
+                    grid-column: 6;
+                  `}
+                >
+                  <Title>Type</Title>
+                  <span>House</span>
+                </DataCell>
+                <DataCell>
+                  <Title>Met</Title>
+                  <span>28.10.2020</span>
+                </DataCell>
+                <DataCell
+                  css={css`
+                    grid-row: 2;
+                    grid-column: 7;
+                  `}
+                >
+                  <Title>Payment</Title>
+                  <span>Unknown</span>
+                </DataCell>
+                <DataCell>
+                  <Title>Status</Title>
+                  <span>Ready</span>
+                </DataCell>
+                <DataCell
+                  css={css`
+                    grid-row: 2;
+                    grid-column: 8;
+                  `}
+                >
+                  <Title>Reminders</Title>
+                  <span>None</span>
+                </DataCell>
+                <DataCell
                   css={css`
                     ${tw`p-4`}
+                    grid-row: span 2;
+                  `}
+                >
+                  Salamatin Andrey
+                </DataCell>
+                <DataCell
+                  css={css`
+                    ${tw`p-4`}
+                    grid-row: span 2;
                   `}
                 >
                   <Paperclip></Paperclip>
-                </ListItem>
-              </ListRow>
+                </DataCell>
+              </li>
             </ul>
           </TabPanel>
 
           <TabPanel value={activeTab} index={0}>
-            <div
-              css={
-                ((theme) => css`
-                  ${tw`flex rounded shadow my-4`}
-                  min-height: 48px;
-                  background: ${theme.colors.bgItem};
-                  color: ${theme.colors.textItem};
-
-                  > * {
-                    border-right: 1px solid ${theme.colors.bgContent};
-
-                    &:last-child {
-                      border: 0;
-                    }
-                  }
-                `) as ThemedCSS
-              }
-            >
-              <ToolbarItem noPadding>
-                <label
-                  htmlFor="search-orders"
-                  css={css`
-                    ${tw`flex items-center px-4`}
-                  `}
-                >
-                  Search
-                </label>
-              </ToolbarItem>
-              <ToolbarItem
-                noPadding
-                css={css`
-                  ${tw`flex-1`}
-                `}
-              >
-                <input
-                  id="search-orders"
-                  type="search"
-                  placeholder="Search..."
-                  css={
-                    ((theme) => css`
-                      ${tw`flex-1 px-4`}
-                      background: ${theme.colors.bgItem};
-                      color: ${theme.colors.textItem};
-
-                      ::placeholder {
-                        color: ${theme.colors.textContent};
-                      }
-                    `) as ThemedCSS
-                  }
-                ></input>
-              </ToolbarItem>
-              <ToolbarItem noPadding>
-                <button
-                  css={css`
-                    ${tw`px-4`}
-                  `}
-                >
-                  <Search strokeWidth="1.5"></Search>
-                </button>
-              </ToolbarItem>
-              <ToolbarItem noPadding>
-                <button
-                  css={css`
-                    ${tw`px-4 pr-2`}
-                  `}
-                >
-                  <StackIcon strokeWidth="1.5"></StackIcon>
-                </button>
-                <button
-                  css={css`
-                    ${tw`px-4 pl-2`}
-                  `}
-                >
-                  <Grid strokeWidth="1.5"></Grid>
-                </button>
-              </ToolbarItem>
-            </div>
+            <Toolbar></Toolbar>
 
             {/* Table */}
             <table
@@ -313,31 +263,16 @@ let ClientsPage: NextPage<Props> = (props) => {
   );
 };
 
+let DataLink = styled.span<Themed>`
+  color: ${({ theme }) => theme.colors.accent};
+`;
+
+let DataCell = styled.div`
+  ${tw`flex flex-col items-center justify-center`}
+`;
+
 let Title = styled.span<Themed>`
   color: ${(props) => props.theme.colors.textItemTitle};
-`;
-
-let ListRow = styled.div<Themed>`
-  ${tw`flex rounded shadow-xl`}
-  background: ${({ theme }) => theme.colors.bgItem};
-  color: ${({ theme }) => theme.colors.textItem};
-`;
-
-let ListItem = styled.div<{ pad?: number; col?: boolean; grow?: boolean; center?: boolean }>`
-  ${tw`flex`}
-  ${({ col }) => col && tw`flex-col`}
-  ${({ center }) => center && tw`items-center justify-center`}
-  ${({ grow }) => grow && tw`flex-1`}
-  padding: ${({ pad }) => pad && `${pad}rem`};
-
-  :hover {
-    /* ${tw`bg-red-300`} */
-  }
-`;
-
-let ToolbarItem = styled.div<{ noPadding?: boolean }>`
-  ${tw`flex`}
-  ${({ noPadding }) => !noPadding && tw`px-4 space-x-2`}
 `;
 
 let PlayIcon: React.FC = () => {
@@ -352,15 +287,6 @@ let PlayIcon: React.FC = () => {
           transform: scale(0.35) translateX(2px);
         `}
       ></polyline>
-    </svg>
-  );
-};
-
-let StackIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
-  return (
-    <svg viewBox="0 0 24 24" width="24" strokeWidth="2" {...props}>
-      <rect width="18.5" x="2.5" height="6" y="4" stroke="currentColor" fill="none"></rect>
-      <rect width="18.5" x="2.5" height="6" y="15" stroke="currentColor" fill="none"></rect>
     </svg>
   );
 };
@@ -388,11 +314,11 @@ let HCell = styled.th<Themed>`
   top: 60px;
   background: ${(props) => props.theme.colors.bgItem};
 
-  &:first-child {
+  &:first-of-type {
     ${tw`rounded-tl rounded-bl`}
   }
 
-  &:last-child {
+  &:last-of-type {
     ${tw`rounded-tr rounded-br`}
   }
 `;
@@ -400,11 +326,11 @@ let HCell = styled.th<Themed>`
 let Cell = styled.td`
   ${tw`py-4 px-4`}
 
-  &:first-child {
+  &:first-of-type {
     ${tw`rounded-tl rounded-bl`}
   }
 
-  &:last-child {
+  &:last-of-type {
     ${tw`rounded-tr rounded-br`}
   }
 `;

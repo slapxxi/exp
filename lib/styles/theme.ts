@@ -2,6 +2,12 @@ import { Theme } from '../types';
 
 export let defaultTheme = {
   type: 'light',
+  gradients: {
+    accent: 'linear-gradient(90deg, rgba(218,26,33,1) 0%, rgba(227,175,42,1) 100%)',
+    vertical: {
+      accent: 'linear-gradient(0deg, rgba(218,26,33,1) 0%, rgba(227,175,42,1) 100%)',
+    },
+  },
   colors: {
     accent: 'tomato',
     success: 'hsl(120, 67%, 45%)',
@@ -9,6 +15,7 @@ export let defaultTheme = {
     bgCheckbox: 'hsl(225, 5%, 80%)',
     bgInput: 'hsl(225, 5%, 100%)',
     bgItem: 'hsl(225, 5%, 100%)',
+    bgItemActive: 'hsl(225, 5%, 90%)',
     bgContent: 'hsl(225, 5%, 95%)',
     bgHeader: 'hsl(225, 25%, 40%)',
     bgTable: 'hsl(225, 25%, 40%)',
@@ -31,13 +38,20 @@ export let defaultTheme = {
 
 export let darkTheme: Theme = {
   type: 'dark',
+  gradients: {
+    accent: 'linear-gradient(90deg, rgba(218,26,33,1) 0%, rgba(227,175,42,1) 100%)',
+    vertical: {
+      accent: 'linear-gradient(0deg, rgba(218,26,33,1) 0%, rgba(227,175,42,1) 100%)',
+    },
+  },
   colors: {
-    accent: 'slateblue',
+    accent: 'hsla(20, 70%, 55%)',
     success: 'hsl(120, 97%, 85%)',
     error: 'hsl(0, 97%, 85%)',
     bgCheckbox: 'hsl(225, 8%, 28%)',
     bgInput: 'hsl(225, 5%, 20%)',
     bgItem: 'hsl(225, 8%, 21%)',
+    bgItemActive: 'hsl(225, 9%, 19%)',
     bgContent: 'hsl(225, 8%, 17%)',
     bgHeader: 'hsl(225, 8%, 14%)',
     bgSidebar: 'hsl(225, 8%, 12%)',
@@ -46,7 +60,7 @@ export let darkTheme: Theme = {
     textCheckbox: 'hsl(225, 5%, 100%)',
     textContent: 'hsl(225, 15%, 60%)',
     textItem: 'hsl(225, 15%, 75%)',
-    textItemTitle: 'hsl(225, 10%, 38%)',
+    textItemTitle: 'hsl(225, 10%, 30%)',
     textHeader: 'hsl(225, 11%, 48%)',
     textTable: 'hsl(225, 11%, 48%)',
     textTableHeader: 'hsl(225, 11%, 42%)',

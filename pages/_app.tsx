@@ -476,7 +476,7 @@ let SidebarItem = styled.li<Themed<{ active?: boolean }>>`
     ${tw`absolute top-0 left-0 bottom-0`}
     content: '';
     width: 4px;
-    background: ${({ theme }) => theme.colors.accent};
+    background: ${({ theme }) => theme.gradients.vertical.accent};
     transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
     transition: transform 0.3s;
   }
@@ -504,7 +504,7 @@ let MenuItem = styled.li<Themed<{ active?: boolean }>>`
     right: calc(50% + 2px);
     transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
     opacity: ${({ active }) => (active ? '1' : '0')};
-    background: ${({ theme }) => theme.colors.accent};
+    background: ${({ theme }) => theme.gradients.vertical.accent};
     /* will-change: transform, opacity; */
     transition: transform 0.3s, opacity 0.3s;
   }
