@@ -42,7 +42,6 @@ export let Checkbox: React.FC<Props> = (props) => {
           overflow: visible;
           width: 20px;
           transform: translateY(-2px);
-          margin-right: 0.25rem;
         `}
         className={className}
       >
