@@ -30,9 +30,12 @@ export let Tabs: React.FC<TabsProps> = (props) => {
     <div
       css={(theme) => css`
         ${tw`shadow`}
-        top: 0;
         margin: auto;
         background: ${theme.colors.bgItem};
+
+        @media (min-width: 768px) {
+          ${tw`sticky top-0`}
+        }
       `}
     >
       <div

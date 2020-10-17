@@ -10,7 +10,7 @@ export let Toolbar: React.FC<any> = () => {
     <div
       css={
         ((theme) => css`
-          ${tw`flex rounded shadow mb-4`}
+          ${tw`flex rounded shadow mb-2`}
           width: 100%;
           min-height: 48px;
           background: ${theme.colors.bgItem};
@@ -23,6 +23,10 @@ export let Toolbar: React.FC<any> = () => {
               border: 0;
             }
           }
+
+          @media (min-width: 768px) {
+            ${tw`mb-4`}
+          }
         `) as ThemedCSS
       }
     >
@@ -30,6 +34,10 @@ export let Toolbar: React.FC<any> = () => {
         noPadding
         css={css`
           ${tw`hidden`}
+
+          @media (min-width: 768px) {
+            ${tw`flex`}
+          }
         `}
       >
         <label
