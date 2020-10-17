@@ -21,8 +21,8 @@ let IndexPage: React.FC = () => {
           onClick={() => setActive(!active)}
           css={css`
             ${tw`select-none`}
-            width: 500px;
-            height: 500px;
+            width: 100%;
+            max-width: 500px;
           `}
         >
           <defs>

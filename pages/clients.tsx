@@ -42,7 +42,7 @@ let ClientsPage: NextPage<Props> = (props) => {
 
         <div
           css={css`
-            ${tw`p-4`}
+            ${tw`p-2`}
           `}
         >
           <TabPanel value={activeTab} index={1}>
@@ -465,7 +465,7 @@ let Row = styled.tr<Themed>`
 `;
 
 let HCell = styled.th<Themed>`
-  ${tw`p-4 sticky text-left`}
+  ${tw`p-4 text-left`}
   top: 60px;
   background: ${(props) => props.theme.colors.bgItem};
 

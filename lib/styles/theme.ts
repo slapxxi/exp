@@ -24,7 +24,7 @@ export let defaultTheme = {
     textCheckbox: 'hsl(225, 5%, 20%)',
     textContent: 'hsl(225, 20%, 20%)',
     textItem: 'hsl(225, 20%, 20%)',
-    textItemTitle: 'hsl(225, 20%, 20%)',
+    textItemTitle: 'hsl(225, 20%, 70%)',
     textTable: 'hsl(225, 20%, 5%)',
     textTableHeader: 'hsl(225, 10%, 70%)',
     textHeader: 'hsl(225, 20%, 65%)',

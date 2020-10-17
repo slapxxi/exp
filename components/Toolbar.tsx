@@ -11,6 +11,7 @@ export let Toolbar: React.FC<any> = () => {
       css={
         ((theme) => css`
           ${tw`flex rounded shadow mb-4`}
+          width: 100%;
           min-height: 48px;
           background: ${theme.colors.bgItem};
           color: ${theme.colors.textItem};
@@ -25,7 +26,12 @@ export let Toolbar: React.FC<any> = () => {
         `) as ThemedCSS
       }
     >
-      <ToolbarItem noPadding>
+      <ToolbarItem
+        noPadding
+        css={css`
+          ${tw`hidden`}
+        `}
+      >
         <label
           htmlFor="search-orders"
           css={css`
@@ -47,7 +53,7 @@ export let Toolbar: React.FC<any> = () => {
           placeholder="Search..."
           css={
             ((theme) => css`
-              ${tw`flex-1 px-4`}
+              ${tw`flex-1 px-4 rounded`}
               background: ${theme.colors.bgItem};
               color: ${theme.colors.textItem};
 

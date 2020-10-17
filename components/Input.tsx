@@ -14,6 +14,7 @@ export let Input: React.FC<Props> = (props) => {
           ${tw`p-2 rounded`}
           background: ${theme.colors.bgInput};
           color: ${theme.colors.textInput};
+          appearance: none;
 
           ::placeholder {
             color: ${theme.colors.textInputPlaceholder};

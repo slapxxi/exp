@@ -34,6 +34,7 @@ import {
   X,
 } from 'react-feather';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { useMediaQuery } from 'react-responsive';
 import { animated as a, useSpring, useTransition } from 'react-spring';
 import tw from 'twin.macro';
 import shallow from 'zustand/shallow';
@@ -57,19 +58,21 @@ let App: AppType = (props) => {
     setMenuActive(false);
   });
   let time = useCurrentTime();
+  let tabletSize = useMediaQuery({ minWidth: 768 });
   // @ts-ignore
   let transitions = useTransition([{ id: router.route, Component, pageProps }], (item) => item.id, {
-    from: { y: 65, opacity: 0 },
-    leave: { y: -65, opacity: 0 },
+    from: { y: 60, opacity: 0 },
+    leave: { y: -60, opacity: 0 },
     enter: { y: 0, opacity: 1 },
-    immediate: reduceMotion,
+    immediate: reduceMotion || !tabletSize,
   });
+  let desktopSize = useMediaQuery({ minWidth: 1024 });
 
   let ap = useSpring({
-    x: menuActive ? -49 : -100,
+    x: menuActive ? 0 : -100,
     immediate: reduceMotion,
     config: {
-      friction: 18,
+      friction: tabletSize ? 18 : 24,
     },
   });
 
@@ -90,21 +93,25 @@ let App: AppType = (props) => {
 
     router.events.on('routeChangeComplete', handler);
     return () => router.events.off('routeChangeComplete', handler);
-  }, []);
+  }, [router]);
 
   return (
-    // Prevent SSR errors
     <ReactQueryCacheProvider queryCache={cache}>
+      {/* Prevent SSR errors */}
       <ThemeProvider theme={mounted && darkMode ? darkTheme : defaultTheme}>
         <div
           css={[
-            tw`grid h-full box-border overflow-hidden`,
+            tw`grid box-border`,
             css`
               visibility: ${mounted ? 'visible' : 'hidden'};
-              max-height: 100vh;
+              min-height: 100%;
               grid-template-columns: 80px 1fr;
               grid-template-rows: 70px 1fr;
-              /* grid-template-areas: 'sidebar header' 'sidebar content'; */
+              grid-auto-rows: 100px;
+
+              @media (min-width: 768px) {
+                ${tw`overflow-hidden h-full`}
+              }
             `,
           ]}
         >
@@ -113,19 +120,72 @@ let App: AppType = (props) => {
               body {
                 background: ${theme.colors.bgSidebar};
               }
+
+              ${menuActive &&
+              css`
+                @media (max-width: 768px) {
+                  html,
+                  body {
+                    overflow: hidden !important;
+                  }
+                }
+              `}
             `}
           />
+
+          <div
+            css={css`
+              ${tw`absolute`}
+            `}
+          >
+            <svg viewBox="0 0 100 100">
+              <mask id="avatar-mask">
+                <circle cx="50" cy="50" r="48" fill="white"></circle>
+              </mask>
+            </svg>
+          </div>
+
+          <div
+            css={(theme) => css`
+              ${tw`z-30`}
+              grid-column: 1;
+              grid-row: 1;
+              background: ${theme.colors.bgSidebar};
+              color: ${theme.colors.textSidebar};
+
+              @media (min-width: 768px) {
+                ${tw`fixed`}
+              }
+
+              @media (min-width: 1024px) {
+                ${tw`hidden`}
+              }
+            `}
+          >
+            <SidebarItem onClick={() => setMenuActive(!menuActive)}>
+              <Menu size={28}></Menu>
+            </SidebarItem>
+          </div>
+
           {/* Menu */}
           <a.div
             ref={ref}
             css={
               ((theme) => css`
-                ${tw`absolute flex z-30 bottom-0 top-0 select-none`}
-                width: 600px;
-                will-change: transform;
+                ${tw`fixed flex z-30 top-0 bottom-0 right-0 left-0 select-none`}
                 box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.15);
                 background: ${theme.colors.bgSidebar};
                 color: ${theme.colors.textSidebar};
+                will-change: transform;
+
+                @media (min-width: 768px) {
+                  right: 50%;
+                  left: -100px;
+                }
+
+                @media (min-width: 1024px) {
+                  right: 70%;
+                }
               `) as ThemedCSS
             }
             style={{ transform: ap.x.interpolate((v) => `translateX(${v}%)`) }}
@@ -136,9 +196,9 @@ let App: AppType = (props) => {
               `}
             >
               <MenuItem
-                onClick={() => setMenuActive(!menuActive)}
                 css={(theme) => css`
-                  ${tw`relative justify-end`}
+                  ${tw`relative items-stretch`}
+                  min-height: 70px;
 
                   ::before {
                     ${tw`absolute left-0 right-0 bottom-0`}
@@ -146,9 +206,30 @@ let App: AppType = (props) => {
                     height: 2px;
                     background: ${theme.colors.bgSidebarActive};
                   }
+
+                  @media (min-width: 768px) {
+                    ${tw`space-x-0`}
+                  }
                 `}
               >
-                <X></X>
+                <Avatar
+                  src={URL}
+                  css={css`
+                    width: 40px;
+
+                    @media (min-width: 768px) {
+                      ${tw`hidden`}
+                    }
+                  `}
+                ></Avatar>
+                <button
+                  onClick={() => setMenuActive(!menuActive)}
+                  css={css`
+                    ${tw`flex flex-1 justify-end items-center`}
+                  `}
+                >
+                  <X></X>
+                </button>
               </MenuItem>
               <MenuItem active={router.pathname === '/'}>
                 <Link href="/" as="/">
@@ -212,14 +293,17 @@ let App: AppType = (props) => {
           <header
             css={
               ((theme) => css`
-                ${tw`fixed right-0 flex z-20`}
-                left: 70px;
+                ${tw`flex z-20 px-2`}
                 height: 70px;
-                grid-area: header;
-                grid-column: 2;
+                grid-column: 2/3;
                 grid-row: 1;
                 background: ${theme.colors.bgHeader};
                 color: ${theme.colors.textHeader};
+
+                @media (min-width: 768px) {
+                  ${tw`fixed px-0 right-0`}
+                  left: 70px;
+                }
               `) as ThemedCSS
             }
           >
@@ -230,14 +314,15 @@ let App: AppType = (props) => {
             >
               <HeaderItem
                 css={css`
-                  ${tw`flex-1 justify-end space-x-4`}
+                  ${tw`flex-1 justify-end space-x-2`}
                 `}
               >
                 <Input
                   placeholder="Search"
                   type="search"
                   css={css`
-                    ${tw`block`}
+                    ${tw`block my-2`}
+                    align-self: center;
                     flex: 1 10px;
                     width: clamp(100px, 100%, 800px);
                     transition: ${mounted && reduceMotion ? 'none' : 'transform 0.3s, color 0.2s'};
@@ -255,11 +340,24 @@ let App: AppType = (props) => {
                     }
                   `}
                 />
-                <button onClick={() => setSearchActive(!searchActive)}>
+                <button
+                  onClick={() => setSearchActive(!searchActive)}
+                  css={css`
+                    ${tw`p-2`}
+                  `}
+                >
                   <Search></Search>
                 </button>
               </HeaderItem>
-              <HeaderItem>
+              <HeaderItem
+                css={css`
+                  ${tw`hidden`}
+
+                  @media (min-width: 1024px) {
+                    ${tw`flex self-center`}
+                  }
+                `}
+              >
                 <Clock></Clock>{' '}
                 <span
                   css={css`
@@ -271,15 +369,19 @@ let App: AppType = (props) => {
               </HeaderItem>
               <HeaderItem
                 css={css`
+                  ${tw`hidden`}
                   align-items: stretch;
+
+                  @media (min-width: 768px) {
+                    ${tw`flex`}
+                  }
                 `}
               >
                 <Avatar
                   src={URL}
-                  width={46}
-                  height={46}
                   css={css`
                     align-self: center;
+                    width: 46px;
                   `}
                 ></Avatar>
                 <button
@@ -296,10 +398,26 @@ let App: AppType = (props) => {
                   ></ChevronDown>
                 </button>
               </HeaderItem>
-              <HeaderItem>
+              <HeaderItem
+                css={css`
+                  ${tw`hidden`}
+
+                  @media (min-width: 1024px) {
+                    ${tw`flex self-center`}
+                  }
+                `}
+              >
                 <Bell></Bell>
               </HeaderItem>
-              <HeaderItem>
+              <HeaderItem
+                css={css`
+                  ${tw`hidden`}
+
+                  @media (min-width: 1024px) {
+                    ${tw`flex self-center`}
+                  }
+                `}
+              >
                 <div
                   css={css`
                     ${tw`relative`}
@@ -316,7 +434,16 @@ let App: AppType = (props) => {
                   ></Circle>
                 </div>
               </HeaderItem>
-              <HeaderItem>
+              <HeaderItem
+                css={css`
+                  ${tw`hidden`}
+
+                  @media (min-width: 768px) {
+                    ${tw`flex`}
+                    align-self: center;
+                  }
+                `}
+              >
                 <LogOut></LogOut>
               </HeaderItem>
             </ul>
@@ -327,8 +454,7 @@ let App: AppType = (props) => {
             css={
               ((theme) =>
                 css`
-                  ${tw`fixed bottom-0 top-0 z-20`}
-                  grid-area: sidebar;
+                  ${tw`fixed bottom-0 top-0 z-20 hidden`}
                   grid-column: 1;
                   grid-row: 1/3;
                   background: ${theme.colors.bgSidebar};
@@ -336,6 +462,10 @@ let App: AppType = (props) => {
                   transform: translateX(0%);
                   transition: transform 0.3s;
                   will-change: transform;
+
+                  @media (min-width: 1024px) {
+                    ${tw`flex`}
+                  }
                 `) as ThemedCSS
             }
           >
@@ -409,8 +539,8 @@ let App: AppType = (props) => {
             css={(theme) => css`
               ${tw`z-0`}
               background: ${theme.colors.bgContent};
-              grid-column: 2 / span 2;
-              grid-row: 2 / span 2;
+              grid-column: 1/3;
+              grid-row: 2/3;
             `}
           ></div>
 
@@ -425,11 +555,16 @@ let App: AppType = (props) => {
                 key={key}
                 css={(theme) => css`
                   ${tw`z-10`}
+                  overflow-x: hidden;
                   overflow-y: auto;
                   color: ${theme.colors.textContent};
-                  grid-column: 2 / span 2;
-                  grid-row: 2 / span 2;
+                  grid-column: 1/3;
+                  grid-row: 2/3;
                   will-change: transform, opacity;
+
+                  @media (min-width: 1024px) {
+                    grid-column: 2/3;
+                  }
                 `}
               >
                 <item.Component {...item.pageProps}></item.Component>
@@ -484,10 +619,9 @@ let SidebarItem = styled.li<Themed<{ active?: boolean }>>`
 
 let MenuItem = styled.li<Themed<{ active?: boolean }>>`
   ${tw`flex px-6 space-x-4 items-center relative cursor-pointer`}
-  box-sizing: border-box;
-  height: 70px;
+  max-height: 70px;
+  flex: 1;
   transition: background-color 0.3s;
-  padding-left: 322px;
   background: ${({ theme, active }) => active && theme.colors.bgSidebarActive};
   color: ${({ theme, active }) => active && theme.colors.textSidebarActive};
 
@@ -500,21 +634,31 @@ let MenuItem = styled.li<Themed<{ active?: boolean }>>`
     ${tw`absolute top-0 bottom-0`}
     content: '';
     left: 0;
-    right: 50%;
-    right: calc(50% + 2px);
+    width: 4px;
     transform: ${({ active }) => (active ? 'none' : 'translateX(-4px)')};
     opacity: ${({ active }) => (active ? '1' : '0')};
     background: ${({ theme }) => theme.gradients.vertical.accent};
-    /* will-change: transform, opacity; */
     transition: transform 0.3s, opacity 0.3s;
+
+    @media (min-width: 768px) {
+      width: 104px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    padding-left: 128px;
   }
 `;
 
 let HeaderItem = styled.li<Themed>`
-  ${tw`flex items-center justify-center space-x-2 px-4`}
+  ${tw`flex justify-center space-x-2`}
 
   :hover {
     color: ${({ theme }) => theme.colors.textHeaderActive};
+  }
+
+  @media (min-width: 768px) {
+    ${tw`px-4`}
   }
 `;
 
