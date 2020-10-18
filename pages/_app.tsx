@@ -1,6 +1,7 @@
 import { css, Global } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Avatar } from '@self/components/Avatar';
+import { Dropdown } from '@self/components/Dropdown';
 import { Input } from '@self/components/Input';
 import { useCurrentTime } from '@self/lib/hooks/useCurrentTime';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
@@ -10,7 +11,7 @@ import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
 import { AppType } from 'next/dist/next-server/lib/utils';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Bell,
   ChevronDown,
@@ -48,6 +49,7 @@ let App: AppType = (props) => {
   let { Component, pageProps, router } = props;
   let [mounted, setMounted] = useState(false);
   let [menuActive, setMenuActive] = useState(false);
+  let [showDropdown, setShowDropdown] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
   let { darkMode, setDarkMode, reduceMotion } = useSettingsStore(
     ({ darkMode, setDarkMode, reduceMotion }) => ({ darkMode, setDarkMode, reduceMotion }),
@@ -66,6 +68,7 @@ let App: AppType = (props) => {
     immediate: reduceMotion || !tabletSize,
   });
   let desktopSize = useMediaQuery({ minWidth: 1024 });
+  let buttonRef = useRef();
 
   let ap = useSpring({
     x: menuActive ? 0 : -100,
@@ -115,21 +118,27 @@ let App: AppType = (props) => {
           ]}
         >
           <Global
-            styles={(theme) => css`
-              body {
-                background: ${theme.colors.bgSidebar};
-              }
-
-              ${menuActive &&
-              css`
-                @media (max-width: 768px) {
-                  html,
-                  body {
-                    overflow: hidden !important;
-                  }
+            styles={
+              ((theme) => css`
+                ::selection {
+                  background: ${theme.colors.bgSelection};
                 }
-              `}
-            `}
+
+                body {
+                  background: ${theme.colors.bgSidebar};
+                }
+
+                ${menuActive &&
+                css`
+                  @media (max-width: 768px) {
+                    html,
+                    body {
+                      overflow: hidden !important;
+                    }
+                  }
+                `}
+              `) as ThemedCSS
+            }
           />
 
           <div
@@ -380,9 +389,11 @@ let App: AppType = (props) => {
                   `}
                 ></Avatar>
                 <button
+                  ref={buttonRef}
                   css={css`
                     ${tw`flex items-center space-x-2`}
                   `}
+                  onClick={() => setShowDropdown(!showDropdown)}
                 >
                   <span>Salamatin Dmitry</span>
                   <ChevronDown
@@ -392,6 +403,38 @@ let App: AppType = (props) => {
                     `}
                   ></ChevronDown>
                 </button>
+                <Dropdown
+                  anchorElement={buttonRef}
+                  open={showDropdown}
+                  onClose={() => setShowDropdown((s) => !s)}
+                >
+                  <ul
+                    css={(theme) => css`
+                      ${tw`flex flex-col`}
+                      color: ${theme.colors.textItem};
+
+                      > * {
+                        > button {
+                          ${tw`w-full p-4 text-left`}
+
+                          &:hover {
+                            background: ${theme.colors.bgDropdownActive};
+                          }
+                        }
+                      }
+                    `}
+                  >
+                    <li>
+                      <button>Manage</button>
+                    </li>
+                    <li>
+                      <button>Log Out</button>
+                    </li>
+                    <li>
+                      <button>Do not Disturb</button>
+                    </li>
+                  </ul>
+                </Dropdown>
               </HeaderItem>
               <HeaderItem
                 css={css`

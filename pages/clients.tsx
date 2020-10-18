@@ -1,4 +1,5 @@
 import { css } from '@emotion/core';
+import { Dropdown } from '@self/components/Dropdown';
 import { OrderRow } from '@self/components/OrderRow';
 import { PropertyInfo } from '@self/components/PropertyInfo';
 import { Tab, TabPanel, Tabs } from '@self/components/Tabs';
@@ -9,7 +10,7 @@ import { getProperty } from '@self/lib/services/getProperty';
 import { OrderItem, PropertyItem, Serialized } from '@self/lib/types';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import tw from 'twin.macro';
 import shallow from 'zustand/shallow';
@@ -35,6 +36,7 @@ let ClientsPage: NextPage<Props> = (props) => {
       initialData: initialData.property,
     },
   );
+  let buttonRef = useRef();
 
   return (
     <>
@@ -111,6 +113,49 @@ let ClientsPage: NextPage<Props> = (props) => {
                 <OrderRow key={item.id} item={item}></OrderRow>
               ))}
             </div>
+          </TabPanel>
+
+          <TabPanel value={activeTab} index={2}>
+            <button
+              ref={buttonRef}
+              onClick={() => setActive(!active)}
+              css={(theme) => css`
+                ${tw`absolute right-0 p-4 rounded mr-2`}
+                background: ${theme.colors.bgItem};
+                color: ${theme.colors.textItem};
+              `}
+            >
+              Choose
+            </button>
+            <Dropdown anchorElement={buttonRef} open={active} onClose={() => setActive(!active)}>
+              <div
+                css={(theme) => css`
+                  ${tw`p-4`}
+                  max-width: 350px;
+                  color: ${theme.colors.textItem};
+                `}
+              >
+                <h1
+                  css={css`
+                    ${tw`text-2xl mb-4`}
+                  `}
+                >
+                  Greetings
+                </h1>
+                <p>
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et maiores earum
+                  voluptatum ab tenetur asperiores voluptate possimus nulla, rem illum. Ab natus
+                  saepe eius ullam, dignissimos accusantium iste cumque expedita.
+                </p>
+                <button
+                  css={css`
+                    ${tw`py-2`}
+                  `}
+                >
+                  Next
+                </button>
+              </div>
+            </Dropdown>
           </TabPanel>
         </div>
       </div>

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-export function useOutsideClick(fn: () => void) {
+export function useOutsideClick(fn: (target: any) => void) {
   let ref = useRef<any>();
 
   useEffect(() => {
     function handler(event: any) {
       if (ref.current && !ref.current.contains(event.target)) {
-        fn();
+        fn(event.target);
       }
     }
 
