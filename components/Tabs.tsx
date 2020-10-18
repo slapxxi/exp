@@ -29,7 +29,7 @@ export let Tabs: React.FC<TabsProps> = (props) => {
   return (
     <div
       css={(theme) => css`
-        ${tw`shadow`}
+        ${tw`shadow z-10`}
         margin: auto;
         background: ${theme.colors.bgItem};
 

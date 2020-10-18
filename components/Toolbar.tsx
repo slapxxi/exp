@@ -81,7 +81,16 @@ export let Toolbar: React.FC<any> = () => {
           <Search strokeWidth="1.5"></Search>
         </button>
       </ToolbarItem>
-      <ToolbarItem noPadding>
+      <ToolbarItem
+        noPadding
+        css={css`
+          ${tw`hidden`}
+
+          @media (min-width: 768px) {
+            ${tw`flex`}
+          }
+        `}
+      >
         <button
           css={css`
             ${tw`px-4 pr-2`}

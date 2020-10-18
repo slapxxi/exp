@@ -49,11 +49,10 @@ let App: AppType = (props) => {
   let [mounted, setMounted] = useState(false);
   let [menuActive, setMenuActive] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
-  let { darkMode, setDarkMode } = useSettingsStore(
-    ({ darkMode, setDarkMode }) => ({ darkMode, setDarkMode }),
+  let { darkMode, setDarkMode, reduceMotion } = useSettingsStore(
+    ({ darkMode, setDarkMode, reduceMotion }) => ({ darkMode, setDarkMode, reduceMotion }),
     shallow,
   );
-  let reduceMotion = useSettingsStore((s) => s.reduceMotion);
   let ref = useOutsideClick(() => {
     setMenuActive(false);
   });
@@ -179,12 +178,8 @@ let App: AppType = (props) => {
                 will-change: transform;
 
                 @media (min-width: 768px) {
-                  right: 50%;
+                  width: 500px;
                   left: -100px;
-                }
-
-                @media (min-width: 1024px) {
-                  right: 70%;
                 }
               `) as ThemedCSS
             }
