@@ -38,3 +38,40 @@ export type Themed<Props = {}> = Props & { theme: Theme };
 export type ThemedCSS = InterpolationWithTheme<Theme>;
 
 export type PhoneType = 'scam' | 'ads' | 'pranks';
+
+export interface PropertyItem {
+  userId: string;
+  name: string;
+  phoneNumber: string;
+  type: 'house';
+  location: string;
+  amount: number;
+  size: number;
+  curator: string;
+  wants: 'sell';
+  createdAt: Date;
+  updatedAt: Date;
+  met: Date;
+  reminders: null;
+  attachments: null;
+}
+
+export enum OrderItemStatus {
+  completed,
+  noResponse,
+  busy,
+}
+
+export interface OrderItem {
+  id: string | number;
+  phoneNumber: string;
+  callDate: Date;
+  status: OrderItemStatus;
+  duration: number;
+  recording: null;
+  curator: string;
+}
+
+export type Serialized<T> = {
+  [P in keyof T]: T[P] extends Date ? string : T[P];
+};

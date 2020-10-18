@@ -5,7 +5,7 @@ type State = {
   setActiveTab: (n: number) => void;
 };
 
-export let useClientsTabStore = create<State>((set) => {
+export let useClientsPageStore = create<State>((set) => {
   return {
     activeTab: 0,
     setActiveTab: (value) => set({ activeTab: value }),

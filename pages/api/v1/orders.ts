@@ -1,3 +1,4 @@
+import { OrderItemStatus } from '@self/lib/types';
 import { NextApiHandler } from 'next';
 
 let rest = new Array(20).fill(null).map((item, i) => ({
@@ -6,7 +7,7 @@ let rest = new Array(20).fill(null).map((item, i) => ({
   phoneNumber: '89002000600',
   curator: 'Anon',
   duration: 100,
-  status: 'completed',
+  status: OrderItemStatus.completed,
 }));
 
 let orders: NextApiHandler = (req, res) => {
@@ -18,7 +19,7 @@ let orders: NextApiHandler = (req, res) => {
         callDate: new Date(),
         phoneNumber: '89284564334',
         curator: 'Salamatov',
-        status: 'completed',
+        status: OrderItemStatus.completed,
         duration: 392,
         recording: null,
       },
@@ -27,7 +28,7 @@ let orders: NextApiHandler = (req, res) => {
         callDate: new Date(),
         phoneNumber: '89284564300',
         curator: 'Salamatov',
-        status: 'no-response',
+        status: OrderItemStatus.noResponse,
         duration: null,
         recording: null,
       },
@@ -36,7 +37,7 @@ let orders: NextApiHandler = (req, res) => {
         callDate: new Date(),
         phoneNumber: '89284564200',
         curator: 'Salamatov',
-        status: 'busy',
+        status: OrderItemStatus.busy,
         duration: null,
         recording: null,
       },
