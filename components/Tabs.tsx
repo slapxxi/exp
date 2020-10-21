@@ -7,10 +7,11 @@ import tw from 'twin.macro';
 interface TabsProps {
   value: number;
   onChange: (index: number) => void;
+  animate?: boolean;
 }
 
 export let Tabs: React.FC<TabsProps> = (props) => {
-  let { children, value, onChange } = props;
+  let { children, value, animate, onChange } = props;
   let mdSize = useMediaQuery({ minWidth: 768 });
   let lgSize = useMediaQuery({ minWidth: 1024 });
   let div = useMemo(() => {
@@ -53,7 +54,7 @@ export let Tabs: React.FC<TabsProps> = (props) => {
               background: ${theme.gradients.accent};
               width: ${decoratorWidth}%;
               transform: translate3d(${decoratorOffset}%, 0, 0);
-              transition: transform 0.3s;
+              ${animate && 'transition: transform 0.3s;'}
             }
           `) as ThemedCSS
         }

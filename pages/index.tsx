@@ -24,10 +24,16 @@ let IndexPage: React.FC = () => {
           ${tw`flex flex-col items-center justify-center h-full`}
         `}
       >
-        <Dropdown open anchorElement={rootEl}>
+        <Dropdown
+          open
+          anchorElement={rootEl}
+          css={css`
+            ${tw`bg-red-800 p-2`}
+          `}
+        >
           <div
             css={css`
-              ${tw`text-gray-300 p-4`}
+              ${tw`text-gray-800 p-4 bg-white rounded`}
             `}
           >
             Hello

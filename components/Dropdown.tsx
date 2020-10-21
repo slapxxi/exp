@@ -11,6 +11,7 @@ interface Props {
   onClose?: () => void;
   animate?: boolean;
   anchorElement?: HTMLElement;
+  className?: string;
 }
 
 type Position = {
@@ -21,7 +22,7 @@ type Position = {
 };
 
 export let Dropdown: React.FC<Props> = (props) => {
-  let { children, animate, anchorElement, open, onClose } = props;
+  let { children, animate, anchorElement, open, onClose, className } = props;
   let mounted = useMounted();
   let [position, setPosition] = useState<Position>(() => ({
     top: 0,
@@ -86,6 +87,7 @@ export let Dropdown: React.FC<Props> = (props) => {
           transform: ap.s.interpolate((s) => `scale(1,${s})`),
           opacity: ap.s,
         }}
+        className={className}
       >
         <a.div
           css={css`

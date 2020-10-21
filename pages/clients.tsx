@@ -5,12 +5,13 @@ import { PropertyInfo } from '@self/components/PropertyInfo';
 import { Tab, TabPanel, Tabs } from '@self/components/Tabs';
 import { Toolbar } from '@self/components/Toolbar';
 import { useClientsPageStore } from '@self/lib/hooks/useClientsTabStore';
+import { useSettingsStore } from '@self/lib/hooks/useSettingsStore';
 import { getOrders } from '@self/lib/services/getOrders';
 import { getProperty } from '@self/lib/services/getProperty';
 import { OrderItem, PropertyItem, Serialized } from '@self/lib/types';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
 import tw from 'twin.macro';
 import shallow from 'zustand/shallow';
@@ -21,22 +22,22 @@ interface Props {
 
 let ClientsPage: NextPage<Props> = (props) => {
   let { initialData } = props;
+  let reduceMotion = useSettingsStore((s) => s.reduceMotion);
   let [activeTab, setActiveTab] = useClientsPageStore(
     ({ activeTab, setActiveTab }) => [activeTab, setActiveTab],
     shallow,
   );
-  let [active, setActive] = useState(false);
-  let { status, data } = useQuery<Serialized<OrderItem>[]>('ordersData', getOrders, {
+  let { data } = useQuery<Serialized<OrderItem>[]>('ordersData', getOrders, {
     initialData: initialData.orders,
   });
-  let { status: propertyStatus, data: propertyData } = useQuery<Serialized<PropertyItem>[]>(
-    'propertyData',
-    getProperty,
-    {
-      initialData: initialData.property,
-    },
-  );
-  let buttonRef = useRef();
+  let { data: propertyData } = useQuery<Serialized<PropertyItem>[]>('propertyData', getProperty, {
+    initialData: initialData.property,
+  });
+  let [buttonElem, setButtonElem] = useState();
+  let [active, setActive] = useState(false);
+  let buttonRef = useCallback((elem) => {
+    setButtonElem(elem);
+  }, []);
 
   return (
     <>
@@ -45,7 +46,7 @@ let ClientsPage: NextPage<Props> = (props) => {
       </Head>
 
       <div>
-        <Tabs value={activeTab} onChange={(value) => setActiveTab(value)}>
+        <Tabs value={activeTab} onChange={(value) => setActiveTab(value)} animate={!reduceMotion}>
           <Tab label="Requests"></Tab>
           <Tab label="Property"></Tab>
           <Tab label="Clients"></Tab>
@@ -129,7 +130,7 @@ let ClientsPage: NextPage<Props> = (props) => {
             </button>
             <Dropdown
               animate
-              anchorElement={buttonRef.current}
+              anchorElement={buttonElem}
               open={active}
               onClose={() => setActive(!active)}
             >
