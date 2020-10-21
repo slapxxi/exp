@@ -1,10 +1,18 @@
 import { css } from '@emotion/core';
+import { Dropdown } from '@self/components/Dropdown';
 import Head from 'next/head';
-import { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import tw from 'twin.macro';
 
 let IndexPage: React.FC = () => {
   let [active, setActive] = useState(false);
+  let [rootEl, setRootEl] = useState();
+
+  let handleRef = useCallback((elem) => {
+    if (elem) {
+      setRootEl(elem);
+    }
+  }, []);
 
   return (
     <>
@@ -16,7 +24,17 @@ let IndexPage: React.FC = () => {
           ${tw`flex flex-col items-center justify-center h-full`}
         `}
       >
+        <Dropdown open anchorElement={rootEl}>
+          <div
+            css={css`
+              ${tw`text-gray-300 p-4`}
+            `}
+          >
+            Hello
+          </div>
+        </Dropdown>
         <svg
+          ref={handleRef}
           viewBox="0 0 100 100"
           onClick={() => setActive(!active)}
           css={css`

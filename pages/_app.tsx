@@ -4,8 +4,10 @@ import { Avatar } from '@self/components/Avatar';
 import { Dropdown } from '@self/components/Dropdown';
 import { Input } from '@self/components/Input';
 import { useCurrentTime } from '@self/lib/hooks/useCurrentTime';
+import { useMounted } from '@self/lib/hooks/useMounted';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
 import { useSettingsStore } from '@self/lib/hooks/useSettingsStore';
+import { useTransitionStore } from '@self/lib/hooks/useTransitionStore';
 import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
@@ -36,7 +38,7 @@ import {
 } from 'react-feather';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { useMediaQuery } from 'react-responsive';
-import { animated as a, useSpring, useTransition } from 'react-spring';
+import { animated as a, useSpring } from 'react-spring';
 import tw from 'twin.macro';
 import shallow from 'zustand/shallow';
 import '../styles/index.css';
@@ -47,7 +49,7 @@ const cache = new QueryCache();
 
 let App: AppType = (props) => {
   let { Component, pageProps, router } = props;
-  let [mounted, setMounted] = useState(false);
+  let mounted = useMounted();
   let [menuActive, setMenuActive] = useState(false);
   let [showDropdown, setShowDropdown] = useState(false);
   let [searchActive, setSearchActive] = useState(false);
@@ -55,19 +57,12 @@ let App: AppType = (props) => {
     ({ darkMode, setDarkMode, reduceMotion }) => ({ darkMode, setDarkMode, reduceMotion }),
     shallow,
   );
+  let setTransitioning = useTransitionStore((s) => s.setTransitioning);
   let ref = useOutsideClick(() => {
     setMenuActive(false);
   });
   let time = useCurrentTime();
   let tabletSize = useMediaQuery({ minWidth: 768 });
-  // @ts-ignore
-  let transitions = useTransition([{ id: router.route, Component, pageProps }], (item) => item.id, {
-    from: { y: 60, opacity: 0 },
-    leave: { y: -60, opacity: 0 },
-    enter: { y: 0, opacity: 1 },
-    immediate: reduceMotion || !tabletSize,
-  });
-  let desktopSize = useMediaQuery({ minWidth: 1024 });
   let buttonRef = useRef();
 
   let ap = useSpring({
@@ -84,8 +79,6 @@ let App: AppType = (props) => {
         document.body.classList.add('mounted');
       }, 100);
     }
-
-    setMounted(true);
   }, [mounted]);
 
   useEffect(() => {
@@ -404,7 +397,8 @@ let App: AppType = (props) => {
                   ></ChevronDown>
                 </button>
                 <Dropdown
-                  anchorElement={buttonRef}
+                  animate={!reduceMotion}
+                  anchorElement={buttonRef.current}
                   open={showDropdown}
                   onClose={() => setShowDropdown((s) => !s)}
                 >
@@ -583,31 +577,25 @@ let App: AppType = (props) => {
           ></div>
 
           {/* Content */}
-          {mounted &&
-            transitions.map(({ item, key, props }) => (
-              <a.section
-                style={{
-                  opacity: props.opacity,
-                  transform: props.y.interpolate((v) => `translate3d(0, ${v}%, 0)`),
-                }}
-                key={key}
-                css={(theme) => css`
-                  ${tw`z-10`}
-                  overflow-x: hidden;
-                  overflow-y: auto;
-                  color: ${theme.colors.textContent};
-                  grid-column: 1/3;
-                  grid-row: 2/3;
-                  will-change: transform, opacity;
+          {mounted && (
+            <section
+              css={(theme) => css`
+                ${tw`z-10`}
+                overflow-x: hidden;
+                overflow-y: auto;
+                color: ${theme.colors.textContent};
+                grid-column: 1/3;
+                grid-row: 2/3;
+                will-change: transform, opacity;
 
-                  @media (min-width: 1024px) {
-                    grid-column: 2/3;
-                  }
-                `}
-              >
-                <item.Component {...item.pageProps}></item.Component>
-              </a.section>
-            ))}
+                @media (min-width: 1024px) {
+                  grid-column: 2/3;
+                }
+              `}
+            >
+              <Component {...pageProps}></Component>
+            </section>
+          )}
         </div>
       </ThemeProvider>
     </ReactQueryCacheProvider>

@@ -1,6 +1,6 @@
 import { css } from '@emotion/core';
 import Head from 'next/head';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import tw from 'twin.macro';
 
 let DatabasePage: React.FC = () => {

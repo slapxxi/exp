@@ -62,7 +62,7 @@ export let darkTheme: Theme = {
     bgSidebarActive: 'hsl(225, 8%, 21%)',
     bgTable: 'hsl(225, 10%, 10%)',
     bgDropdown: 'hsl(225, 10%, 10%)',
-    bgDropdownActive: 'hsl(225, 10%, 20%)',
+    bgDropdownActive: 'hsl(225, 10%, 15%)',
     textCheckbox: 'hsl(225, 5%, 100%)',
     textContent: 'hsl(225, 15%, 60%)',
     textItem: 'hsl(225, 15%, 75%)',

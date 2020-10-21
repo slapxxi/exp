@@ -1,6 +1,6 @@
 import { css } from '@emotion/core';
 import { ThemedCSS } from '@self/lib/types';
-import { Children, cloneElement, isValidElement, useMemo } from 'react';
+import React, { Children, cloneElement, isValidElement, useMemo } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import tw from 'twin.macro';
 

@@ -1,5 +1,5 @@
 import { css } from '@emotion/core';
-import { SVGAttributes } from 'react';
+import React, { SVGAttributes } from 'react';
 
 interface Props extends SVGAttributes<SVGSVGElement> {
   src?: string;

@@ -127,7 +127,12 @@ let ClientsPage: NextPage<Props> = (props) => {
             >
               Choose
             </button>
-            <Dropdown anchorElement={buttonRef} open={active} onClose={() => setActive(!active)}>
+            <Dropdown
+              animate
+              anchorElement={buttonRef.current}
+              open={active}
+              onClose={() => setActive(!active)}
+            >
               <div
                 css={(theme) => css`
                   ${tw`p-4`}

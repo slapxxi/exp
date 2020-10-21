@@ -1,7 +1,7 @@
 import { css } from '@emotion/core';
 import { useMounted } from '@self/lib/hooks/useMounted';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
-import { MutableRefObject, useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { animated as a, useSpring } from 'react-spring';
 import tw from 'twin.macro';
@@ -9,7 +9,8 @@ import tw from 'twin.macro';
 interface Props {
   open?: boolean;
   onClose?: () => void;
-  anchorElement: MutableRefObject<HTMLElement>;
+  animate?: boolean;
+  anchorElement?: HTMLElement;
 }
 
 type Position = {
@@ -20,16 +21,16 @@ type Position = {
 };
 
 export let Dropdown: React.FC<Props> = (props) => {
-  let { children, anchorElement, open, onClose } = props;
+  let { children, animate, anchorElement, open, onClose } = props;
   let mounted = useMounted();
-  let [position, setPosition] = useState<Position>({
+  let [position, setPosition] = useState<Position>(() => ({
     top: 0,
     left: 0,
     right: 'auto',
     bottom: 'auto',
-  });
+  }));
   let dropdownRef = useOutsideClick((target) => {
-    if (open && !anchorElement.current.contains(target)) {
+    if (open && !anchorElement.contains(target)) {
       onClose?.();
     }
   });
@@ -44,11 +45,12 @@ export let Dropdown: React.FC<Props> = (props) => {
     config: {
       friction: open ? 19 : 24,
     },
+    immediate: !animate,
   });
 
   useLayoutEffect(() => {
-    if (mounted) {
-      let aRect = anchorElement.current.getBoundingClientRect();
+    if (mounted && anchorElement) {
+      let aRect = anchorElement.getBoundingClientRect();
       let dRect = dropdownRef.current.getBoundingClientRect();
       let w = { width: window.innerWidth, height: window.innerHeight };
 
@@ -68,9 +70,9 @@ export let Dropdown: React.FC<Props> = (props) => {
         }));
       }
     }
-  }, [mounted]);
+  }, [mounted, anchorElement]);
 
-  if (mounted) {
+  if (mounted && anchorElement) {
     return createPortal(
       <a.div
         ref={dropdownRef}
