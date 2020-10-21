@@ -75,3 +75,12 @@ export interface OrderItem {
 export type Serialized<T> = {
   [P in keyof T]: T[P] extends Date ? string : T[P];
 };
+
+export interface Doc {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

@@ -23,7 +23,9 @@ export let PropertyInfo: React.FC<Props> = (props) => {
     <li
       key={item.userId}
       css={(theme) => css`
-        ${tw`grid rounded shadow-xl`}
+        ${tw`relative grid rounded shadow-xl`}
+        border: 1px solid transparent;
+        ${selected && `border-color: ${theme.colors.accent}`};
         background: ${theme.colors.bgItem};
         grid-template-columns: repeat(2, auto) minmax(auto, 1.5fr) 1fr 1.25fr auto;
         grid-template-rows: repeat(10, minmax(70px, auto));
@@ -38,7 +40,7 @@ export let PropertyInfo: React.FC<Props> = (props) => {
         }
 
         @media (min-width: 768px) {
-          grid-template-columns: repeat(2, auto) minmax(auto, 1.5fr) repeat(2, 1fr) 1.25fr auto;
+          grid-template-columns: repeat(2, auto) minmax(auto, 1.5fr) repeat(2, 1fr) 1.25fr [col-start] auto [col-end];
           grid-template-rows: repeat(3, minmax(70px, auto));
         }
 

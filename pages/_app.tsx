@@ -7,7 +7,6 @@ import { useCurrentTime } from '@self/lib/hooks/useCurrentTime';
 import { useMounted } from '@self/lib/hooks/useMounted';
 import { useOutsideClick } from '@self/lib/hooks/useOutsideClick';
 import { useSettingsStore } from '@self/lib/hooks/useSettingsStore';
-import { useTransitionStore } from '@self/lib/hooks/useTransitionStore';
 import { darkTheme, defaultTheme } from '@self/lib/styles/theme';
 import { Themed, ThemedCSS } from '@self/lib/types';
 import { ThemeProvider } from 'emotion-theming';
@@ -16,6 +15,7 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Bell,
+  BellOff,
   ChevronDown,
   Clock,
   Database,
@@ -27,6 +27,7 @@ import {
   LogOut,
   Mail,
   Menu,
+  MessageSquare,
   Moon,
   PieChart,
   Search,
@@ -57,7 +58,6 @@ let App: AppType = (props) => {
     ({ darkMode, setDarkMode, reduceMotion }) => ({ darkMode, setDarkMode, reduceMotion }),
     shallow,
   );
-  let setTransitioning = useTransitionStore((s) => s.setTransitioning);
   let ref = useOutsideClick(() => {
     setMenuActive(false);
   });
@@ -255,8 +255,12 @@ let App: AppType = (props) => {
               <MenuItem>
                 <List></List> <span>Tasks</span>
               </MenuItem>
-              <MenuItem>
-                <Folder></Folder> <span>Documents</span>
+              <MenuItem active={router.pathname === '/documents'}>
+                <Link href="/documents" as="/documents">
+                  <MenuLink>
+                    <Folder></Folder> <span>Documents</span>
+                  </MenuLink>
+                </Link>
               </MenuItem>
               <MenuItem>
                 <Volume2></Volume2> <span>Marketing</span>
@@ -409,7 +413,12 @@ let App: AppType = (props) => {
 
                       > * {
                         > button {
-                          ${tw`w-full p-4 text-left`}
+                          ${tw`flex w-full p-4 text-left items-center`}
+
+                          > * {
+                            ${tw`mr-2`}
+                            color: ${theme.colors.textItemTitle};
+                          }
 
                           &:hover {
                             background: ${theme.colors.bgDropdownActive};
@@ -419,13 +428,28 @@ let App: AppType = (props) => {
                     `}
                   >
                     <li>
-                      <button>Manage</button>
+                      <button>
+                        <Settings size={18}></Settings>
+                        Manage
+                      </button>
                     </li>
                     <li>
-                      <button>Log Out</button>
+                      <button>
+                        <BellOff size={18}></BellOff>
+                        Do not Disturb
+                      </button>
                     </li>
                     <li>
-                      <button>Do not Disturb</button>
+                      <button>
+                        <MessageSquare size={18}></MessageSquare>
+                        Messages
+                      </button>
+                    </li>
+                    <li>
+                      <button>
+                        <LogOut size={18}></LogOut>
+                        Log Out
+                      </button>
                     </li>
                   </ul>
                 </Dropdown>
@@ -536,8 +560,12 @@ let App: AppType = (props) => {
               <SidebarItem>
                 <List></List>
               </SidebarItem>
-              <SidebarItem>
-                <Folder></Folder>
+              <SidebarItem active={router.pathname === '/documents'}>
+                <Link href="/documents" as="/documents">
+                  <SidebarLink>
+                    <Folder></Folder>
+                  </SidebarLink>
+                </Link>
               </SidebarItem>
               <SidebarItem>
                 <Volume2></Volume2>

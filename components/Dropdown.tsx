@@ -44,7 +44,8 @@ export let Dropdown: React.FC<Props> = (props) => {
     s: open ? 1 : 0,
     y: open ? 0 : -100,
     config: {
-      friction: open ? 19 : 24,
+      friction: open ? 21 : 26,
+      tension: 200,
     },
     immediate: !animate,
   });
@@ -82,6 +83,7 @@ export let Dropdown: React.FC<Props> = (props) => {
           ${position}
           background: ${theme.colors.bgDropdown};
           transform-origin: top left;
+          will-change: transform;
         `}
         style={{
           transform: ap.s.interpolate((s) => `scale(1,${s})`),
