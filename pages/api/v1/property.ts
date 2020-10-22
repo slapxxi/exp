@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next';
 
-let rest = new Array(5).fill(null).map((item, i) => ({
+let rest = new Array(10).fill(null).map((item, i) => ({
   userId: 2 + i,
   name: 'Ivan Ivanov',
   phoneNumber: '89284564334',

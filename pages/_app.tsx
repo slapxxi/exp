@@ -105,7 +105,7 @@ let App: AppType = (props) => {
               grid-auto-rows: 100px;
 
               @media (min-width: 768px) {
-                ${tw`overflow-hidden h-full`}
+                ${tw`h-full`}
               }
             `,
           ]}
@@ -607,10 +607,9 @@ let App: AppType = (props) => {
           {/* Content */}
           {mounted && (
             <section
+              id="container"
               css={(theme) => css`
                 ${tw`z-10`}
-                overflow-x: hidden;
-                overflow-y: auto;
                 color: ${theme.colors.textContent};
                 grid-column: 1/3;
                 grid-row: 2/3;

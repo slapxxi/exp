@@ -2,11 +2,20 @@ import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { PropertyItem, Serialized, Themed } from '@self/lib/types';
 import { format } from 'date-fns';
-import React from 'react';
-import { Paperclip } from 'react-feather';
+import React, { useCallback, useState } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  Archive,
+  Calendar,
+  MessageSquare,
+  Paperclip,
+  Settings,
+} from 'react-feather';
 import tw from 'twin.macro';
 import { Avatar } from './Avatar';
 import { Checkbox } from './Checkbox';
+import { Dropdown } from './Dropdown';
 
 interface Props {
   item: Serialized<PropertyItem>;
@@ -18,6 +27,11 @@ const URL = 'https://picsum.photos/200/200';
 
 export let PropertyInfo: React.FC<Props> = (props) => {
   let { item, selected, onSelect } = props;
+  let [active, setActive] = useState(false);
+  let [rootEl, setRootEl] = useState();
+  let handleRef = useCallback((elem) => {
+    setRootEl(elem);
+  }, []);
 
   return (
     <li
@@ -338,7 +352,62 @@ export let PropertyInfo: React.FC<Props> = (props) => {
           }
         `}
       >
-        <Paperclip></Paperclip>
+        <Paperclip ref={handleRef} onClick={() => setActive(!active)}></Paperclip>
+        <Dropdown animate anchorElement={rootEl} open={active} onClose={() => setActive((a) => !a)}>
+          <ul
+            css={(theme) => css`
+              ${tw`grid`}
+              color: ${theme.colors.textItem};
+              grid-template-columns: repeat(3, 1fr);
+              grid-template-rows: repeat(2, 1fr);
+
+              > * {
+                > button {
+                  ${tw`flex w-full p-4 text-left items-center`}
+
+                  > * {
+                    color: ${theme.colors.textItemTitle};
+                  }
+
+                  &:hover {
+                    background: ${theme.colors.bgDropdownActive};
+                  }
+                }
+              }
+            `}
+          >
+            <li>
+              <button>
+                <Activity></Activity>
+              </button>
+            </li>
+            <li>
+              <button>
+                <AlertTriangle></AlertTriangle>
+              </button>
+            </li>
+            <li>
+              <button>
+                <MessageSquare></MessageSquare>
+              </button>
+            </li>
+            <li>
+              <button>
+                <Calendar></Calendar>
+              </button>
+            </li>
+            <li>
+              <button>
+                <Archive></Archive>
+              </button>
+            </li>
+            <li>
+              <button>
+                <Settings></Settings>
+              </button>
+            </li>
+          </ul>
+        </Dropdown>
       </DataCell>
     </li>
   );

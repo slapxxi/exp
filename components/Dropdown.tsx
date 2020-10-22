@@ -51,15 +51,15 @@ export let Dropdown: React.FC<Props> = (props) => {
   });
 
   useLayoutEffect(() => {
-    if (mounted && anchorElement) {
+    if (mounted && anchorElement && open) {
       let aRect = anchorElement.getBoundingClientRect();
       let dRect = dropdownRef.current.getBoundingClientRect();
-      let w = { width: window.innerWidth, height: window.innerHeight };
+      let clientWidth = rootEl.clientWidth;
 
-      if (dRect.width + aRect.left > w.width) {
+      if (dRect.width + aRect.left > clientWidth) {
         setPosition((p) => ({
           top: aRect.top + aRect.height,
-          right: w.width - aRect.right,
+          right: clientWidth - aRect.right,
           left: 'auto',
           bottom: 'auto',
         }));
@@ -72,7 +72,7 @@ export let Dropdown: React.FC<Props> = (props) => {
         }));
       }
     }
-  }, [mounted, anchorElement]);
+  }, [mounted, anchorElement, open]);
 
   if (mounted && anchorElement) {
     return createPortal(
