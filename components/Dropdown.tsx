@@ -12,23 +12,21 @@ interface Props {
   animate?: boolean;
   anchorElement?: HTMLElement;
   className?: string;
+  fixed?: boolean;
 }
 
 type Position = {
   top: string | number;
   left: string | number;
-  right: string | number;
-  bottom: string | number;
 };
 
 export let Dropdown: React.FC<Props> = (props) => {
-  let { children, animate, anchorElement, open, onClose, className } = props;
+  let { children, animate, fixed, anchorElement, open, onClose, className } = props;
   let mounted = useMounted();
+  let [direction, setDirection] = useState('bottom');
   let [position, setPosition] = useState<Position>(() => ({
     top: 0,
     left: 0,
-    right: 'auto',
-    bottom: 'auto',
   }));
   let dropdownRef = useOutsideClick((target) => {
     if (open && !anchorElement.contains(target)) {
@@ -52,25 +50,30 @@ export let Dropdown: React.FC<Props> = (props) => {
 
   useLayoutEffect(() => {
     if (mounted && anchorElement && open) {
+      dropdownRef.current.style.transform = '';
       let aRect = anchorElement.getBoundingClientRect();
       let dRect = dropdownRef.current.getBoundingClientRect();
       let clientWidth = rootEl.clientWidth;
+      let clientHeight = rootEl.clientHeight;
+      let scrollTop = window.scrollY;
+
+      let nextPosition = { ...position };
+      nextPosition.top = aRect.top + aRect.height + scrollTop;
+      nextPosition.left = aRect.x;
 
       if (dRect.width + aRect.left > clientWidth) {
-        setPosition((p) => ({
-          top: aRect.top + aRect.height,
-          right: clientWidth - aRect.right,
-          left: 'auto',
-          bottom: 'auto',
-        }));
-      } else {
-        setPosition((p) => ({
-          top: aRect.top + aRect.height,
-          left: aRect.x,
-          right: 'auto',
-          bottom: 'auto',
-        }));
+        nextPosition.left = aRect.right - dRect.width;
       }
+
+      console.log(dRect.height, aRect.bottom, clientHeight);
+      if (dRect.height + aRect.bottom > clientHeight) {
+        nextPosition.top = scrollTop - dRect.height + aRect.top;
+        setDirection('top');
+      } else {
+        setDirection('bottom');
+      }
+
+      setPosition(nextPosition);
     }
   }, [mounted, anchorElement, open]);
 
@@ -80,9 +83,10 @@ export let Dropdown: React.FC<Props> = (props) => {
         ref={dropdownRef}
         css={(theme) => css`
           ${tw`absolute rounded shadow-lg z-50 overflow-hidden`}
+          ${fixed ? tw`fixed` : tw`absolute`}
           ${position}
           background: ${theme.colors.bgDropdown};
-          transform-origin: top left;
+          transform-origin: ${direction === 'bottom' ? 'top left' : 'bottom'};
           will-change: transform;
         `}
         style={{
@@ -93,7 +97,7 @@ export let Dropdown: React.FC<Props> = (props) => {
       >
         <a.div
           css={css`
-            transform-origin: bottom;
+            transform-origin: ${direction === 'bottom' ? 'bottom' : 'top'};
           `}
           style={{
             transform: ap.s.interpolate((s) => `scale(1,${1 / s})`),
