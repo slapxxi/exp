@@ -65,7 +65,6 @@ export let Dropdown: React.FC<Props> = (props) => {
         nextPosition.left = aRect.right - dRect.width;
       }
 
-      console.log(dRect.height, aRect.bottom, clientHeight);
       if (dRect.height + aRect.bottom > clientHeight) {
         nextPosition.top = scrollTop - dRect.height + aRect.top;
         setDirection('top');
