@@ -58,7 +58,7 @@ export let Dropdown: React.FC<Props> = (props) => {
       let scrollTop = window.scrollY;
 
       let nextPosition = { ...position };
-      nextPosition.top = aRect.top + aRect.height + scrollTop;
+      nextPosition.top = fixed ? aRect.top + aRect.height : aRect.top + aRect.height + scrollTop;
       nextPosition.left = aRect.x;
 
       if (dRect.width + aRect.left > clientWidth) {
@@ -66,7 +66,7 @@ export let Dropdown: React.FC<Props> = (props) => {
       }
 
       if (dRect.height + aRect.bottom > clientHeight) {
-        nextPosition.top = scrollTop - dRect.height + aRect.top;
+        nextPosition.top = fixed ? aRect.top - dRect.height : scrollTop - dRect.height + aRect.top;
         setDirection('top');
       } else {
         setDirection('bottom');
