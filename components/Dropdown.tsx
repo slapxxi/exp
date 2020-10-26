@@ -50,22 +50,29 @@ export let Dropdown: React.FC<Props> = (props) => {
 
   useLayoutEffect(() => {
     if (mounted && anchorElement && open) {
-      dropdownRef.current.style.transform = '';
+      let dropdownEl = dropdownRef.current;
+      dropdownEl.style.transform = '';
+      dropdownEl.style.top = 0;
+      dropdownEl.style.left = 0;
       let aRect = anchorElement.getBoundingClientRect();
-      let dRect = dropdownRef.current.getBoundingClientRect();
+      let dRect = dropdownEl.getBoundingClientRect();
       let clientWidth = rootEl.clientWidth;
       let clientHeight = rootEl.clientHeight;
       let scrollTop = window.scrollY;
 
-      let nextPosition = { ...position };
-      nextPosition.top = fixed ? aRect.top + aRect.height : aRect.top + aRect.height + scrollTop;
-      nextPosition.left = aRect.x;
+      let nextPosition = {
+        top: fixed ? aRect.top + aRect.height : aRect.top + aRect.height + scrollTop,
+        left: aRect.left,
+      };
 
       if (dRect.width + aRect.left > clientWidth) {
         nextPosition.left = aRect.right - dRect.width;
       }
 
-      if (dRect.height + aRect.bottom > clientHeight) {
+      if (
+        dRect.height + aRect.bottom > clientHeight &&
+        aRect.top > clientHeight - aRect.top - aRect.height
+      ) {
         nextPosition.top = fixed ? aRect.top - dRect.height : scrollTop - dRect.height + aRect.top;
         setDirection('top');
       } else {
@@ -73,6 +80,8 @@ export let Dropdown: React.FC<Props> = (props) => {
       }
 
       setPosition(nextPosition);
+      dropdownEl.style.top = '';
+      dropdownEl.style.left = '';
     }
   }, [mounted, anchorElement, open]);
 
