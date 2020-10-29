@@ -1,7 +1,8 @@
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
+import { useSettingsStore } from '@self/lib/hooks/useSettingsStore';
 import { PropertyItem, Serialized, Themed } from '@self/lib/types';
-import { format } from 'date-fns';
+import dayjs from 'dayjs';
 import React, { useCallback, useState } from 'react';
 import {
   Activity,
@@ -29,6 +30,7 @@ export let PropertyInfo: React.FC<Props> = (props) => {
   let { item, selected, onSelect } = props;
   let [active, setActive] = useState(false);
   let [rootEl, setRootEl] = useState();
+  let reduceMotion = useSettingsStore((s) => s.reduceMotion);
   let handleRef = useCallback((elem) => {
     setRootEl(elem);
   }, []);
@@ -74,7 +76,7 @@ export let PropertyInfo: React.FC<Props> = (props) => {
           }
         `}
       >
-        <Checkbox animate checked={selected} onChange={onSelect}></Checkbox>
+        <Checkbox animate={!reduceMotion} checked={selected} onChange={onSelect}></Checkbox>
       </label>
       <div
         css={css`
@@ -180,7 +182,7 @@ export let PropertyInfo: React.FC<Props> = (props) => {
         `}
       >
         <Title>Created</Title>
-        <span>{format(new Date(item.createdAt), 'dd.MM.y')}</span>
+        <span>{dayjs(item.createdAt).format('DD.MM.YY')}</span>
       </DataCell>
       <DataCell
         css={css`
@@ -199,7 +201,7 @@ export let PropertyInfo: React.FC<Props> = (props) => {
         `}
       >
         <Title>Updated</Title>
-        <span>{format(new Date(item.updatedAt), 'dd.MM.y')}</span>
+        <span>{dayjs(item.updatedAt).format('DD.MM.YY')}</span>
       </DataCell>
       <DataCell
         css={css`
@@ -256,7 +258,7 @@ export let PropertyInfo: React.FC<Props> = (props) => {
         `}
       >
         <Title>Met</Title>
-        <span>{format(new Date(item.met), 'dd.MM.y')}</span>
+        <span>{dayjs(item.met).format('DD.MM.YY')}</span>
       </DataCell>
       <DataCell
         css={css`
@@ -353,7 +355,12 @@ export let PropertyInfo: React.FC<Props> = (props) => {
         `}
       >
         <Paperclip ref={handleRef} onClick={() => setActive(!active)}></Paperclip>
-        <Dropdown animate anchorElement={rootEl} open={active} onClose={() => setActive((a) => !a)}>
+        <Dropdown
+          animate={!reduceMotion}
+          anchorElement={rootEl}
+          open={active}
+          onClose={() => setActive((a) => !a)}
+        >
           <ul
             css={(theme) => css`
               ${tw`grid`}
@@ -364,13 +371,11 @@ export let PropertyInfo: React.FC<Props> = (props) => {
               > * {
                 > button {
                   ${tw`flex w-full p-4 text-left items-center`}
-
-                  > * {
-                    color: ${theme.colors.textItemTitle};
-                  }
+                  color: ${theme.colors.textItemTitle};
 
                   &:hover {
                     background: ${theme.colors.bgDropdownActive};
+                    color: ${theme.colors.textItem};
                   }
                 }
               }

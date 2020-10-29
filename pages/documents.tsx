@@ -1,26 +1,24 @@
 import { css } from '@emotion/core';
 import { Avatar } from '@self/components/Avatar';
+import { Toolbar } from '@self/components/Toolbar';
 import { getDocuments } from '@self/lib/services/getDocuments';
 import { Doc, Serialized } from '@self/lib/types';
-import format from 'date-fns/format';
+import dayjs from 'dayjs';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
-import { useQuery } from 'react-query';
+import { QueryCache, useQuery } from 'react-query';
+import { dehydrate } from 'react-query/hydration';
 import tw from 'twin.macro';
 
 interface Props {
-  initialData: Serialized<Doc>[];
+  dehydratedState: Serialized<Doc>[];
 }
-
 const URL = 'https://picsum.photos/200/200';
 
 let DocumentsPage: React.FC<Props> = (props) => {
-  let { initialData } = props;
-  let { data } = useQuery<Props['initialData']>('documents', () => getDocuments(), {
-    initialData,
-  });
+  let { data } = useQuery<Props['dehydratedState']>('documents', getDocuments);
 
   return (
     <>
@@ -31,18 +29,54 @@ let DocumentsPage: React.FC<Props> = (props) => {
       <div
         css={css`
           ${tw`p-2`}
+
+          @media (min-width: 768px) {
+            ${tw`p-4`}
+          }
         `}
       >
+        <div
+          css={css`
+            ${tw`flex mb-2 space-x-2`}
+
+            @media (min-width: 768px) {
+              ${tw`mb-4`}
+            }
+          `}
+        >
+          <Toolbar></Toolbar>
+          <Link href="/documents/new">
+            <button
+              css={(theme) => css`
+                ${tw`px-4 rounded shadow`}
+                background: ${theme.colors.bgItem};
+                color: ${theme.colors.textItem};
+              `}
+            >
+              Create
+            </button>
+          </Link>
+        </div>
         <ul
           css={css`
             ${tw`grid`}
+            gap: 0.5rem;
+
+            @media (min-width: 768px) {
+              grid-template-columns: repeat(2, 1fr);
+              gap: 1rem;
+            }
+
+            @media (min-width: 1024px) {
+              grid-template-columns: repeat(3, 1fr);
+            }
           `}
         >
           {data.map((item, i) => (
             <li
               key={item.id}
               css={(theme) => css`
-                ${tw`flex rounded p-2 mb-2 shadow space-x-4`}
+                ${tw`flex rounded p-2 shadow space-x-4`}
                 min-height: 140px;
                 background: ${theme.colors.bgItem};
                 color: ${theme.colors.textItem};
@@ -82,7 +116,7 @@ let DocumentsPage: React.FC<Props> = (props) => {
                     color: ${theme.colors.textItemTitle};
                   `}
                 >
-                  <Link href="/documents/[id]" as={`/documents/${item.id}`}>
+                  <Link href={`/documents/${item.id}`}>
                     <a>{item.title}</a>
                   </Link>
                 </span>
@@ -93,8 +127,8 @@ let DocumentsPage: React.FC<Props> = (props) => {
                     color: ${theme.colors.textItemTitle};
                   `}
                 >
-                  <span>{format(new Date(item.createdAt), 'HH:mm d.MM.yy')}</span>
-                  <span>{format(new Date(item.updatedAt), 'HH:mm d.MM.yy')}</span>
+                  <span>{dayjs(item.createdAt).format('DD.MM.YY HH:mm')}</span>
+                  <span>{dayjs(item.updatedAt).format('DD.MM.YY HH:mm')}</span>
                 </div>
               </div>
             </li>
@@ -106,8 +140,9 @@ let DocumentsPage: React.FC<Props> = (props) => {
 };
 
 export let getServerSideProps: GetServerSideProps = async () => {
-  let data = await getDocuments();
-  return { props: { initialData: data } };
+  let queryCache = new QueryCache();
+  await queryCache.prefetchQuery('documents', getDocuments);
+  return { props: { dehydratedState: dehydrate(queryCache) } };
 };
 
 export default DocumentsPage;

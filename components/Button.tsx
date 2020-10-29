@@ -1,18 +1,28 @@
+import { css } from '@emotion/core';
 import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
+import tw from 'twin.macro';
 
 interface Props
   extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {}
 
-let Button: React.FunctionComponent<Props> = (props) => {
-  let { children, className, ...rest } = props;
+export let Button: React.FunctionComponent<Props> = (props) => {
+  let { children, ...rest } = props;
+
   return (
     <button
-      className={`bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-600 ${className}`}
+      css={(theme) => css`
+        ${tw`p-2 px-4 rounded shadow`}
+        background: ${theme.colors.bgButton};
+        color: ${theme.colors.textButton};
+        transition: transform 0.2s;
+
+        :active {
+          transform: translateY(2px);
+        }
+      `}
       {...rest}
     >
       {children}
     </button>
   );
 };
-
-export default Button;

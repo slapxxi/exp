@@ -5,12 +5,13 @@ import React, { SVGProps } from 'react';
 import { Grid, Search } from 'react-feather';
 import tw from 'twin.macro';
 
-export let Toolbar: React.FC<any> = () => {
+export let Toolbar: React.FC = (props) => {
   return (
     <div
+      {...props}
       css={
         ((theme) => css`
-          ${tw`flex rounded shadow mb-2`}
+          ${tw`flex rounded shadow`}
           width: 100%;
           min-height: 48px;
           background: ${theme.colors.bgItem};
@@ -22,10 +23,6 @@ export let Toolbar: React.FC<any> = () => {
             &:last-child {
               border: 0;
             }
-          }
-
-          @media (min-width: 768px) {
-            ${tw`mb-4`}
           }
         `) as ThemedCSS
       }

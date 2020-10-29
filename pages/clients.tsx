@@ -58,7 +58,11 @@ let ClientsPage: NextPage<Props> = (props) => {
           `}
         >
           <TabPanel value={activeTab} index={1}>
-            <Toolbar></Toolbar>
+            <Toolbar
+              css={css`
+                ${tw`mb-4`}
+              `}
+            ></Toolbar>
             <ul
               css={css`
                 > * {
@@ -88,12 +92,12 @@ let ClientsPage: NextPage<Props> = (props) => {
               ref={buttonRef}
               onClick={() => setActive(!active)}
               css={(theme) => css`
-                ${tw`absolute right-0 p-4 rounded mr-2`}
+                ${tw`absolute p-4 right-0 rounded mr-2`}
                 background: ${theme.colors.bgItem};
                 color: ${theme.colors.textItem};
               `}
             >
-              Choose
+              Pick the Poison
             </button>
             <Dropdown
               animate={!reduceMotion}

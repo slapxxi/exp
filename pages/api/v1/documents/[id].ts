@@ -1,52 +1,14 @@
-import { NextApiHandler } from 'next';
+import withMiddleware from '@self/lib/middleware/withMiddleware';
+import { DbApiHandler } from '@self/lib/types';
 
-let document: NextApiHandler = (req, res) => {
+let document: DbApiHandler = async (req, res) => {
+  let { id } = req.query;
+  let doc = await req.db.collection('docs').findOne({ id });
+
   res.json({
     status: 'ok',
-    data: {
-      id: 1,
-      title: generateName(),
-      content: 'Hello world!',
-      author: 'admin',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+    data: doc,
   });
 };
 
-function generateName() {
-  return (
-    [
-      'majestic',
-      'beautiful',
-      'omnipresent',
-      'atrocious',
-      'delicious',
-      'fantastic',
-      'amazing',
-      'sour',
-      'sweet',
-      'liquid',
-      'solid',
-    ][~~(Math.random() * 11)] +
-    ' ' +
-    [
-      'car',
-      'spider',
-      'monkey',
-      'demigod',
-      'penguin',
-      'crab',
-      'cake',
-      'snake',
-      'balloon',
-      'man',
-      'woman',
-      'pedal',
-      'foot',
-      'bro',
-    ][~~(Math.random() * 14)]
-  );
-}
-
-export default document;
+export default withMiddleware(document);
